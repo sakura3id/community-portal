@@ -57,7 +57,7 @@ export function LoginScreen() {
             <Shield className="brand-icon" />
             <KeyRound className="brand-icon-sub" />
           </div>
-          <h1 className="portal-title">Veryresto</h1>
+          <h1 className="portal-title">Sakura 3</h1>
           <p className="portal-subtitle">{t('login.portal_subtitle')}</p>
         </div>
 

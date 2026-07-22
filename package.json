@@ -10,7 +10,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "fly deploy --build-arg VITE_GIT_SHA=$(git rev-parse HEAD) --build-arg VITE_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg VITE_APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '')"
+    "deploy:staging": "fly deploy --build-arg VITE_GIT_SHA=$(git rev-parse HEAD) --build-arg VITE_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg VITE_APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '')",
+    "deploy:prod": "fly deploy -c fly.production.toml --build-arg VITE_GIT_SHA=$(git rev-parse HEAD) --build-arg VITE_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg VITE_APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '')"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",

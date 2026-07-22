@@ -43,15 +43,15 @@ export function MobileHubScreen({
 
   const iplFinderUrl = isLocal
     ? import.meta.env.VITE_IPL_FINDER_URL || 'http://ipl-finder.localtest.me:8080'
-    : import.meta.env.VITE_IPL_FINDER_URL || 'https://ipl-finder.veryresto.com';
+    : import.meta.env.VITE_IPL_FINDER_URL || 'https://ipl-finder.sakura3.id';
 
   const rekapViewerUrl = isLocal
     ? import.meta.env.VITE_REKAP_VIEWER_URL || 'http://rekap.localtest.me:3000'
-    : import.meta.env.VITE_REKAP_VIEWER_URL || 'https://rekap.veryresto.com';
+    : import.meta.env.VITE_REKAP_VIEWER_URL || 'https://rekap.sakura3.id';
 
   const communityDocsUrl = isLocal
     ? import.meta.env.VITE_COMMUNITY_DOCS_URL || 'http://docs.localtest.me:3001'
-    : import.meta.env.VITE_COMMUNITY_DOCS_URL || 'https://info.veryresto.com';
+    : import.meta.env.VITE_COMMUNITY_DOCS_URL || 'https://docs.sakura3.id';
 
   const apps: ApplicationItem[] = [
     {

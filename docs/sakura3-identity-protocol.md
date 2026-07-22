@@ -1,10 +1,10 @@
-# Veryresto Identity Protocol
+# Sakura 3 Identity Protocol
 
 > **Version:** 1.0  
 > **Status:** Active  
-> **Scope:** All applications in the `veryresto.com` ecosystem
+> **Scope:** All applications in the `sakura3.id` ecosystem
 
-This document is a **platform-agnostic specification**. It defines the contracts that every resident application must conform to in order to participate in the shared Veryresto identity system. It makes no assumption about your programming language, runtime, or framework.
+This document is a **platform-agnostic specification**. It defines the contracts that every resident application must conform to in order to participate in the shared Sakura 3 identity system. It makes no assumption about your programming language, runtime, or framework.
 
 For concrete implementation examples, see the [reference implementations](./auth-integration-guide.md). For visual step-by-step sequence diagrams of the flows, see the [Authentication Sequence Diagrams](./auth-sequence-diagram.md).
 
@@ -12,7 +12,7 @@ For concrete implementation examples, see the [reference implementations](./auth
 
 ## 1. Auth Topology
 
-The Veryresto ecosystem uses a **centralized identity provider (IdP)** model.
+The Sakura 3 ecosystem uses a **centralized identity provider (IdP)** model.
 
 ```
                      ┌──────────────────────────────────────┐
@@ -22,7 +22,7 @@ The Veryresto ecosystem uses a **centralized identity provider (IdP)** model.
                                         │
                      ┌──────────────────▼───────────────────┐
                      │      Community Portal (Identity)      │
-                     │      portal.veryresto.com            │
+                     │      portal.sakura3.id                │
                      │                                       │
                      │  • The only app that initiates OAuth  │
                      │  • Handles approval/rejection flow    │
@@ -31,7 +31,7 @@ The Veryresto ecosystem uses a **centralized identity provider (IdP)** model.
                              │                  │
                ┌─────────────▼──┐         ┌────▼─────────────┐
                │   App A         │         │   App B           │
-               │ ipl-finder.…   │         │ rekap.veryresto… │
+               │ ipl-finder.…   │         │ rekap.sakura3.id  │
                │                │         │                   │
                │ reads cookie   │         │ reads cookie      │
                │ checks Supabase│         │ checks Supabase   │
@@ -52,7 +52,7 @@ The auth session is propagated via an HTTP cookie set by the portal after succes
 ### Cookie Name
 
 ```
-veryresto-auth
+sakura3-auth
 ```
 
 All apps **must** use this exact key when reading the session storage. Do not use a different key.
@@ -61,7 +61,7 @@ All apps **must** use this exact key when reading the session storage. Do not us
 
 | Environment | Cookie Domain |
 |---|---|
-| Production | `.veryresto.com` |
+| Production | `.sakura3.id` |
 | Local development | `.localtest.me` |
 | Bare `localhost` / IP | Set without a domain attribute (browser default) |
 
@@ -105,12 +105,12 @@ The cookie lives for **30 days**. The Supabase access token (JWT) inside it expi
 When a user is not authenticated, the app must redirect them to the portal with a return URL:
 
 ```
-https://portal.veryresto.com/?redirect_to=<URL-encoded return URL>
+https://portal.sakura3.id/?redirect_to=<URL-encoded return URL>
 ```
 
 **Example:**
 ```
-https://portal.veryresto.com/?redirect_to=https%3A%2F%2Fipl-finder.veryresto.com%2Fdashboard
+https://portal.sakura3.id/?redirect_to=https%3A%2F%2Fipl-finder.sakura3.id%2Fdashboard
 ```
 
 ### Return URL Requirements
@@ -123,7 +123,7 @@ https://portal.veryresto.com/?redirect_to=https%3A%2F%2Fipl-finder.veryresto.com
 
 After the portal completes authentication:
 
-1. The `veryresto-auth` cookie is written to `.veryresto.com`.
+1. The `sakura3-auth` cookie is written to `.sakura3.id`.
 2. The browser is redirected to the validated `redirect_to` URL.
 3. Your app reads the cookie, initializes a Supabase session, and verifies approval status.
 
@@ -252,7 +252,7 @@ This section defines what your app must do to establish a valid, trusted session
 
 ### Step 1: Read the Cookie
 
-Read the raw value of the `veryresto-auth` cookie. URL-decode it, then JSON-parse it to obtain the session object.
+Read the raw value of the `sakura3-auth` cookie. URL-decode it, then JSON-parse it to obtain the session object.
 
 ### Step 2: Extract the Access Token
 
@@ -286,7 +286,7 @@ The access token has a short TTL (~1 hour). Use the `refresh_token` to obtain a 
 ### Verification Flow Summary
 
 ```
-Read veryresto-auth cookie
+Read sakura3-auth cookie
         │
         ▼
 Cookie absent? ──────────────────────────────────► Redirect to portal

@@ -2,7 +2,7 @@
   "features": [
     {
       "name": "Wildcard Subdomain SSO (Single Sign-On)",
-      "description": "Shared session mechanism across subdomains (*.veryresto.com in production, *.localtest.me in local development) using a custom cookie storage adapter (CookieStorage). Handles session persistence, validation of return URLs, and automatic token refresh."
+      "description": "Shared session mechanism across subdomains (*.sakura3.id in production, *.localtest.me in local development) using a custom cookie storage adapter (CookieStorage). Handles session persistence, validation of return URLs, and automatic token refresh."
     },
     {
       "name": "Metadata Stripping & Cookie Size Optimization",
@@ -93,7 +93,7 @@
     {
       "name": "send-notification-email",
       "type": "Supabase Edge Function",
-      "description": "Email dispatcher integrated with Resend API. Accepts payloads for 'new_user' (notifying admin@veryresto.com), 'user_approved', and 'user_rejected' (notifying target resident email)."
+      "description": "Email dispatcher integrated with Resend API. Accepts payloads for 'new_user' (notifying sakura3.programming@gmail.com), 'user_approved', and 'user_rejected' (notifying target resident email)."
     }
   ],
   "database_tables": [
@@ -192,7 +192,7 @@
     {
       "name": "on_profile_created_assign_admin",
       "trigger_event": "AFTER INSERT ON public.profiles",
-      "description": "Runs public.assign_admin_role() to verify if the newly registered user email matches 'veryresto@gmail.com' and auto-assigns the global 'admin' role if true."
+      "description": "Runs public.assign_admin_role() to verify if the newly registered user email matches 'sakura3.programming@gmail.com' and auto-assigns the global 'admin' role if true."
     },
     {
       "name": "update_profiles_updated_at",

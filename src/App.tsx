@@ -85,11 +85,11 @@ const ALLOWED_ORIGINS = [
   'http://rekap.localtest.me:3000',
   'http://docs.localtest.me:3001',
 
-  'https://rekap.veryresto.com',
-  'https://ipl-finder.veryresto.com',
-  'https://portal.veryresto.com',
-  'https://docs.veryresto.com',
-  'https://info.veryresto.com'
+  'https://rekap.sakura3.id',
+  'https://ipl-finder.sakura3.id',
+  'https://portal.sakura3.id',
+  'https://docs.sakura3.id',
+  'https://info.sakura3.id'
 ];
 
 const getValidatedRedirectUrl = (urlParam: string | null): string | null => {

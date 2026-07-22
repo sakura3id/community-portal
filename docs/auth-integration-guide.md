@@ -1,8 +1,8 @@
 # Auth Integration Guide
 
-> **For resident developers building apps in the Veryresto ecosystem.**
+> **For resident developers building apps in the Sakura 3 ecosystem.**
 
-Veryresto uses a **centralized identity system**. You do not build your own login — you integrate with the Community Portal and share its session. For a visual overview of how authentication redirects, SSO, and background refreshes work, see the [Authentication Sequence Diagrams](./auth-sequence-diagram.md).
+Sakura 3 uses a **centralized identity system**. You do not build your own login — you integrate with the Community Portal and share its session. For a visual overview of how authentication redirects, SSO, and background refreshes work, see the [Authentication Sequence Diagrams](./auth-sequence-diagram.md).
 
 This guide is split into two layers.
 
@@ -12,7 +12,7 @@ This guide is split into two layers.
 
 Read this first, regardless of your stack.
 
-**[Veryresto Identity Protocol](./veryresto-identity-protocol.md)**
+**[Sakura 3 Identity Protocol](./sakura3-identity-protocol.md)**
 
 Defines the auth topology, cookie contract, redirect contract, approval contract, RBAC contract, and session verification contract in a **platform-agnostic** way.
 
@@ -43,7 +43,7 @@ Open `community-portal/src/App.tsx` and add your production and local dev URLs t
 ```typescript
 const ALLOWED_ORIGINS = [
   // ... existing entries ...
-  'https://my-app.veryresto.com',       // ← production
+  'https://my-app.sakura3.id',       // ← production
   'http://my-app.localtest.me:3000',    // ← local dev
 ];
 ```
@@ -63,7 +63,7 @@ VALUES (
   'my_app',                              -- unique slug, used in permission namespace
   'My App Name',
   'Brief description',
-  'https://my-app.veryresto.com'
+  'https://my-app.sakura3.id'
 ) ON CONFLICT (slug) DO NOTHING;
 
 -- Define permissions
@@ -88,7 +88,7 @@ WHERE app.slug = 'my_app' AND ar.name = 'resident' AND ap.name = 'read_data'
 ON CONFLICT DO NOTHING;
 ```
 
-Once registered, the **Admin Center** on `portal.veryresto.com` can assign app roles to individual residents.
+Once registered, the **Admin Center** on `portal.sakura3.id` can assign app roles to individual residents.
 
 ---
 
@@ -96,11 +96,11 @@ Once registered, the **Admin Center** on `portal.veryresto.com` can assign app r
 
 | Item | Value |
 |---|---|
-| Cookie name | `veryresto-auth` |
-| Cookie domain (prod) | `.veryresto.com` |
+| Cookie name | `sakura3-auth` |
+| Cookie domain (prod) | `.sakura3.id` |
 | Cookie domain (local) | `.localtest.me` |
-| Supabase `storageKey` | `veryresto-auth` |
-| Portal URL (prod) | `https://portal.veryresto.com` |
+| Supabase `storageKey` | `sakura3-auth` |
+| Portal URL (prod) | `https://portal.sakura3.id` |
 | Portal URL (local) | `http://portal.localtest.me:5173` |
 | Permission RPC | `has_namespaced_permission(user_id, 'app_slug.perm_name')` |
 | Approval field | `public.profiles.approval_status` |

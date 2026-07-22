@@ -1,6 +1,6 @@
-# fly.toml file for Veryresto Community Identity Portal (Staging)
+# fly.toml file for Sakura 3 Community Identity Portal (Production)
 
-app = "community-veryresto"
+app = "portal-sakura3"
 primary_region = "sin" # Singapore (closest region to UTC+7)
 
 [build]

@@ -269,7 +269,7 @@ etc.
 Keep
 
 ```
-veryresto-auth
+sakura3-auth
 ```
 
 unchanged.
@@ -285,7 +285,7 @@ Changing the cookie name would invalidate all existing sessions and require coor
 Keep
 
 ```
-veryresto-auth
+sakura3-auth
 ```
 
 unchanged.
@@ -421,8 +421,8 @@ Provide:
 2. List of renamed environment variables.
 3. Any manual follow-up steps required.
 4. Confirmation that:
-   - cookie name remains `veryresto-auth`
-   - auth storage key remains `veryresto-auth`
+   - cookie name remains `sakura3-auth`
+   - auth storage key remains `sakura3-auth`
    - database schema was untouched
    - routes and APIs were untouched
    - only terminology was changed
