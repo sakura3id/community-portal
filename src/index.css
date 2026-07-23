@@ -154,15 +154,16 @@ a {
 /* Portal Main Container layout */
 .portal-container {
   position: relative;
-  min-height: 100vh;
+  height: 100%;
   width: 100%;
   max-width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 24px;
+  padding: 40px 24px;
   z-index: 1;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 /* Glow Background Accents */
@@ -226,6 +227,7 @@ a {
   max-width: 480px;
   border-radius: 24px;
   padding: 48px;
+  margin: auto;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
 }
