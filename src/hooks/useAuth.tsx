@@ -82,20 +82,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signInAsDemo = async (password: string) => {
-    const res = await fetch('/api/auth/predefined-login', {
+    const { data: sessionData, error: funcError } = await supabase.functions.invoke('predefined-login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ account: 'demo', password }),
+      body: { account: 'demo', password },
     });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error || `Predefined login failed: ${res.status}`);
-    }
+    if (funcError) throw funcError;
+    if (!sessionData) throw new Error('Failed to retrieve session from login.');
 
-    const sessionData = await res.json();
     const { error } = await supabase.auth.setSession({
       access_token: sessionData.access_token,
       refresh_token: sessionData.refresh_token,
