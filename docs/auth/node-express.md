@@ -1,9 +1,9 @@
 # Reference Implementation: Node.js + Express
 
 > **Stack:** Node.js, Express, `@supabase/supabase-js`  
-> **Protocol:** [Veryresto Identity Protocol](../veryresto-identity-protocol.md)
+> **Protocol:** [Sakura 3 Identity Protocol](../sakura3-identity-protocol.md)
 
-This guide covers integrating Veryresto auth into a **server-side Express application**, where cookie parsing and session validation happen in backend middleware.
+This guide covers integrating Sakura 3 auth into a **server-side Express application**, where cookie parsing and session validation happen in backend middleware.
 
 ---
 
@@ -54,14 +54,14 @@ Create `src/middleware/auth.js`:
 const { supabase } = require('../supabase');
 
 /**
- * Reads the veryresto-auth cookie, validates the session with Supabase,
+ * Reads the sakura3-auth cookie, validates the session with Supabase,
  * and checks that the user's account is approved.
  *
  * Attaches req.user and req.profile on success.
  */
 async function requireAuth(req, res, next) {
   // 1. Read the shared session cookie
-  const rawCookie = req.cookies['veryresto-auth'];
+  const rawCookie = req.cookies['sakura3-auth'];
   if (!rawCookie) {
     return res.status(401).json({ error: 'Not authenticated' });
   }

@@ -1,30 +1,30 @@
 # Community Portal
 
-The **Veryresto Identity Portal** — the centralized authentication and identity management hub for the Veryresto resident ecosystem.
+The **Sakura 3 Identity Portal** — the centralized authentication and identity management hub for the Sakura 3 resident ecosystem.
 
-**Live:** [portal.veryresto.com](https://portal.veryresto.com)  
-**GitHub:** [veryresto/community-portal](https://github.com/veryresto/community-portal)
+**Live:** [portal.sakura3.id](https://portal.sakura3.id)  
+**GitHub:** [sakura3prog/community-portal](https://github.com/sakura3prog/community-portal)
 
 ---
 
 ## What This Is
 
-This is the **single sign-on portal** for all Veryresto resident applications. It is the only app in the ecosystem that handles Google OAuth and manages resident identity. Other resident apps (IPL Finder, Rekap Viewer, etc.) redirect here to authenticate and share the session via a cross-subdomain cookie.
+This is the **single sign-on portal** for all Sakura 3 resident applications. It is the only app in the ecosystem that handles Google OAuth and manages resident identity. Other resident apps (IPL Finder, Rekap Viewer, etc.) redirect here to authenticate and share the session via a cross-subdomain cookie.
 
 ### Key Responsibilities
 
 - **Google OAuth sign-in** — the only OAuth entry point in the ecosystem
 - **Resident approval workflow** — new accounts go through admin review before access is granted
 - **Role & permission management** — admins assign app-level roles to residents via the Admin Center
-- **Session propagation** — sets the `veryresto-auth` cookie on `.veryresto.com` so all subdomains share the same session
+- **Session propagation** — sets the `sakura3-auth` cookie on `.sakura3.id` so all subdomains share the same session
 
 ### Ecosystem Apps
 
 | App | URL | Status |
 |---|---|---|
-| Community Portal (this) | `portal.veryresto.com` | ✅ Live |
-| IPL Finder | `ipl-finder.veryresto.com` | ✅ Live |
-| Rekap Viewer | `rekap.veryresto.com` | ✅ Live |
+| Community Portal (this) | `portal.sakura3.id` | ✅ Live |
+| IPL Finder | `ipl-finder.sakura3.id` | ✅ Live |
+| Rekap Viewer | `rekap.sakura3.id` | ✅ Live |
 | Kas Management | — | 📋 Planned |
 | Surat Administration | — | 📋 Planned |
 
@@ -37,7 +37,7 @@ If you are building a new app that should authenticate using this portal, read t
 | Document | Description |
 |---|---|
 | [Auth Integration Guide](./docs/auth-integration-guide.md) | Start here — overview, app registration, quick reference |
-| [Veryresto Identity Protocol](./docs/veryresto-identity-protocol.md) | Platform-agnostic auth contract (cookie, redirect, approval, RBAC specs) |
+| [Sakura 3 Identity Protocol](./docs/sakura3-identity-protocol.md) | Platform-agnostic auth contract (cookie, redirect, approval, RBAC specs) |
 | [React + Vite Implementation](./docs/auth/react-vite.md) | Reference implementation for React/Vite apps |
 | [Node.js + Express Implementation](./docs/auth/node-express.md) | Reference implementation for Express backends |
 | [Next.js Implementation](./docs/auth/nextjs.md) | Stub — contributions welcome |
@@ -80,7 +80,7 @@ The platform features a lightweight path-based internationalization (i18n) layer
 ### Setup
 
 ```bash
-git clone https://github.com/veryresto/community-portal.git
+git clone https://github.com/sakura3prog/community-portal.git
 cd community-portal
 npm install
 cp .env.example .env
@@ -120,8 +120,8 @@ VITE_SUPABASE_URL="https://your-supabase-project.supabase.co"
 VITE_SUPABASE_PUBLISHABLE_KEY="your-supabase-anon-key"
 
 # Ecosystem app URLs (used for portal hub directory links)
-VITE_IPL_FINDER_URL="https://ipl-finder.veryresto.com"
-VITE_REKAP_VIEWER_URL="https://rekap.veryresto.com"
+VITE_IPL_FINDER_URL="https://ipl-finder.sakura3.id"
+VITE_REKAP_VIEWER_URL="https://rekap.sakura3.id"
 ```
 
 ---
@@ -130,11 +130,17 @@ VITE_REKAP_VIEWER_URL="https://rekap.veryresto.com"
 
 Deployed to Fly.io via Docker + nginx.
 
+### Deploy Staging (`veryresto.com`)
 ```bash
-fly deploy
+npm run deploy:staging
 ```
+Config: [`fly.toml`](./fly.toml) — app name `community-veryresto`.
 
-Config: [`fly.toml`](./fly.toml) — app name `community-veryresto`, region `sin` (Singapore).
+### Deploy Production (`sakura3.id`)
+```bash
+npm run deploy:prod
+```
+Config: [`fly.production.toml`](./fly.production.toml) — app name `portal-sakura3`.
 
 ---
 
@@ -162,7 +168,7 @@ community-portal/
     migrations/                 # Database schema and RLS policies
     functions/                  # Supabase Edge Functions
   docs/
-    veryresto-identity-protocol.md  # Platform-agnostic auth contract
+    sakura3-identity-protocol.md  # Platform-agnostic auth contract
     auth-integration-guide.md       # Developer integration index
     auth/                           # Per-stack reference implementations
 ```

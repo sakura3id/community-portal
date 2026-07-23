@@ -4,7 +4,7 @@ VALUES (
   'rekap_viewer',
   'Rekap Viewer',
   'Fly.io cached backend display for Sheets logs, reports, and real-time community summaries.',
-  'https://rekap.veryresto.com'
+  'https://rekap.sakura3.id'
 ) ON CONFLICT (slug) DO NOTHING;
 
 -- Define basic permissions

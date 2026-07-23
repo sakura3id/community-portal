@@ -14,7 +14,7 @@ const CONFIG = {
   ENABLE_REJECTION_NOTIFICATION: true,  // Notify user when rejected by admin
 
   // Admin email to receive new user notifications
-  ADMIN_EMAIL: "veryresto@gmail.com",
+  ADMIN_EMAIL: "sakura3.programming@gmail.com",
 
   // Email sender configuration
   // Note: For production, use a verified domain in Resend

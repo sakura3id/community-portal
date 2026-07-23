@@ -67,7 +67,7 @@ export function usePermissions(): Permissions {
 
         const activeRoles = rolesData?.map(r => r.role) || [];
         
-        const demoEmail = import.meta.env.VITE_DEMO_USER_EMAIL || 'demo@veryresto.com';
+        const demoEmail = import.meta.env.VITE_DEMO_USER_EMAIL || 'demo@sakura3.id';
         const isDemo = !!user && user.email === demoEmail;
 
         const adminStatus = activeRoles.includes('admin') || isDemo;

@@ -31,7 +31,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const demoEmail = Deno.env.get("DEMO_USER_EMAIL") || "demo@veryresto.com";
+    const demoEmail = Deno.env.get("DEMO_USER_EMAIL") || "demo@sakura3.id";
     const demoPassword = Deno.env.get("DEMO_USER_PASSWORD");
 
     if (!demoPassword) {

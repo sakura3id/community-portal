@@ -1,9 +1,9 @@
 # Reference Implementation: React + Vite (TypeScript)
 
 > **Stack:** React, Vite, TypeScript, `@supabase/supabase-js`  
-> **Protocol:** [Veryresto Identity Protocol](../veryresto-identity-protocol.md)
+> **Protocol:** [Sakura 3 Identity Protocol](../sakura3-identity-protocol.md)
 
-This guide walks through integrating Veryresto auth into a React/Vite frontend application.
+This guide walks through integrating Sakura 3 auth into a React/Vite frontend application.
 
 ---
 
@@ -22,7 +22,7 @@ Add to your `.env` file:
 ```env
 VITE_SUPABASE_URL="https://your-supabase-project.supabase.co"
 VITE_SUPABASE_PUBLISHABLE_KEY="your-supabase-anon-key"
-VITE_PORTAL_URL="https://portal.veryresto.com"
+VITE_PORTAL_URL="https://portal.sakura3.id"
 ```
 
 For local development:
@@ -35,7 +35,7 @@ VITE_PORTAL_URL="http://portal.localtest.me:5173"
 
 ## 3. Supabase Client with Cookie Storage
 
-Create `src/lib/supabase.ts`. The key requirement is a custom `CookieStorage` class so the client reads from the shared `veryresto-auth` cookie across subdomains.
+Create `src/lib/supabase.ts`. The key requirement is a custom `CookieStorage` class so the client reads from the shared `sakura3-auth` cookie across subdomains.
 
 ```typescript
 import { createClient } from '@supabase/supabase-js';
@@ -60,7 +60,7 @@ const parseJwt = (token: string) => {
 const getCookieDomain = (): string => {
   const h = window.location.hostname;
   if (h.endsWith('.localtest.me') || h === 'localtest.me') return '.localtest.me';
-  if (h.endsWith('.veryresto.com') || h === 'veryresto.com') return '.veryresto.com';
+  if (h.endsWith('.sakura3.id') || h === 'sakura3.id') return '.sakura3.id';
   return h;
 };
 
@@ -125,7 +125,7 @@ class CookieStorage implements SupportedStorage {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storageKey: 'veryresto-auth',  // ⚠️ Must match the portal's storage key exactly
+    storageKey: 'sakura3-auth',  // ⚠️ Must match the portal's storage key exactly
     storage: new CookieStorage(),
     persistSession: true,
     autoRefreshToken: true,
@@ -145,7 +145,7 @@ import type { ReactNode } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 
-const PORTAL_URL = import.meta.env.VITE_PORTAL_URL || 'https://portal.veryresto.com';
+const PORTAL_URL = import.meta.env.VITE_PORTAL_URL || 'https://portal.sakura3.id';
 
 interface AuthContextType {
   user: User | null;
@@ -305,7 +305,7 @@ The local portal runs at `http://portal.localtest.me:5173`.
 ## Summary Checklist
 
 - [ ] `@supabase/supabase-js` installed
-- [ ] `CookieStorage` implemented with `storageKey: 'veryresto-auth'`
+- [ ] `CookieStorage` implemented with `storageKey: 'sakura3-auth'`
 - [ ] `redirectToPortal()` called when `user` is `null`
 - [ ] `approval_status === 'approved'` checked before rendering app content
 - [ ] App origin added to portal's `ALLOWED_ORIGINS` in `App.tsx`
