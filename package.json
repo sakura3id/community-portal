@@ -6,6 +6,8 @@
   "scripts": {
     "predev": "node scripts/generate-build-info.js",
     "dev": "vite",
+    "dev:staging": "npm run predev && vite --mode development --host portal.localtest.me --port 5173",
+    "dev:prod": "npm run predev && vite --mode production --host portal.localtest.me --port 5173",
     "prebuild": "node scripts/generate-build-info.js",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
