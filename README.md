@@ -3,7 +3,7 @@
 The **Sakura 3 Identity Portal** — the centralized authentication and identity management hub for the Sakura 3 resident ecosystem.
 
 **Live:** [portal.sakura3.id](https://portal.sakura3.id)  
-**GitHub:** [sakura3prog/community-portal](https://github.com/sakura3prog/community-portal)
+**GitHub:** [sakura3id/community-portal](https://github.com/sakura3id/community-portal)
 
 ---
 
