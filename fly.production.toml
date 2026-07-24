@@ -1,14 +1,14 @@
 # fly.toml file for Sakura 3 Community Identity Portal (Production)
 
-app = "portal-sakura3"
+app = "community-portal-prod"
 primary_region = "sin" # Singapore (closest region to UTC+7)
 
 [build]
   # Uses the local Dockerfile we created
   dockerfile = "Dockerfile"
   [build.args]
-    VITE_SUPABASE_URL = "https://lfxkabhzfgenpqfnhjyw.supabase.co"
-    VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_jtADEBQ9FAYPaSqU5iabtg_m356QDIw"
+    VITE_SUPABASE_URL = "https://cycloiewvrajoeosahtd.supabase.co"
+    VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_31n0z182NnueTrYzppqW_w_gBf-vN8p"
 
 [http_service]
   internal_port = 80
