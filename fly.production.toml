@@ -1,6 +1,6 @@
 # fly.toml file for Sakura 3 Community Identity Portal (Production)
 
-app = "portal-sakura3"
+app = "community-portal-prod"
 primary_region = "sin" # Singapore (closest region to UTC+7)
 
 [build]
