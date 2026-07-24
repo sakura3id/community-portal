@@ -89,7 +89,10 @@ const ALLOWED_ORIGINS = [
   'https://ipl-finder.sakura3.id',
   'https://portal.sakura3.id',
   'https://docs.sakura3.id',
-  'https://info.sakura3.id'
+  'https://info.sakura3.id',
+
+  'https://rekap.veryresto.com',
+  'https://portal.veryresto.com'
 ];
 
 const getValidatedRedirectUrl = (urlParam: string | null): string | null => {
