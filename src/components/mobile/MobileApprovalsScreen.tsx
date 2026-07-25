@@ -57,12 +57,14 @@ export function MobileApprovalsScreen({
 
   const stats: StatItem[] = [
     { id: 'all', label: 'Total Records', value: totalCount, color: 'var(--primary)' },
+    { id: 'unsubmitted', label: 'Unsubmitted', value: profiles.filter(p => p.approval_status === 'unsubmitted').length, color: 'var(--text-muted)' },
     { id: 'pending', label: 'Pending Review', value: profiles.filter(p => p.approval_status === 'pending').length, color: 'var(--pending)' },
     { id: 'approved', label: 'Approved Users', value: profiles.filter(p => p.approval_status === 'approved').length, color: 'var(--success)' },
   ];
 
   const statusFilterOptions: FilterOption[] = [
     { id: 'all', label: 'All Status' },
+    { id: 'unsubmitted', label: 'Unsubmitted' },
     { id: 'pending', label: 'Pending' },
     { id: 'approved', label: 'Approved' },
     { id: 'suspended', label: 'Suspended' },

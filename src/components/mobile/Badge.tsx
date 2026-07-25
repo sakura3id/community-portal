@@ -9,6 +9,7 @@ interface BadgeProps {
     | 'vendor'
     | 'approved'
     | 'pending'
+    | 'unsubmitted'
     | 'suspended'
     | 'rejected'
     | 'standard-resident'

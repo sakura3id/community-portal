@@ -545,6 +545,12 @@ a {
   color: var(--pending);
 }
 
+.status-badge.unsubmitted {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
 .status-badge.error {
   background-color: var(--error-bg);
   border: 1px solid var(--error-border);
@@ -1307,6 +1313,12 @@ a {
   color: var(--pending);
 }
 
+.pill-badge.unsubmitted {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
 .pill-badge.rejected {
   background-color: var(--error-bg);
   border: 1px solid var(--error-border);
@@ -1999,6 +2011,11 @@ a {
 .badge-pending {
   background: hsla(38, 92%, 50%, 0.12);
   color: hsl(38, 92%, 50%);
+}
+
+.badge-unsubmitted {
+  background: rgba(148, 163, 184, 0.12);
+  color: rgb(100, 116, 139);
 }
 
 .badge-suspended, .badge-rejected {

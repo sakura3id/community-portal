@@ -2,6 +2,7 @@
   "waiting_room": {
     "title": "Waiting Room",
     "awaiting_verification": "Awaiting Verification",
+    "profile_incomplete": "Profile Incomplete",
     "welcome": "Welcome, {name}",
     "loading": "Loading your registration details...",
     "submitted_title": "Information Submitted",

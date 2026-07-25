@@ -32,6 +32,7 @@ export function PendingApprovalScreen() {
   const [savedHouseNumber, setSavedHouseNumber] = useState<string | null>(null);
   const [savedWhatsappNumber, setSavedWhatsappNumber] = useState<string | null>(null);
   const [savedRequestedAffiliation, setSavedRequestedAffiliation] = useState<string | null>(null);
+  const [dbStatus, setDbStatus] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -49,13 +50,14 @@ export function PendingApprovalScreen() {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .select('house_number, whatsapp_number, participant_type, resident_subtype, requested_affiliation')
+          .select('house_number, whatsapp_number, participant_type, resident_subtype, requested_affiliation, approval_status')
           .eq('id', user.id)
           .maybeSingle();
 
         if (error) throw error;
 
         if (data) {
+          setDbStatus(data.approval_status);
           // Check if onboarding details have actually been submitted
           const hasSubmitted =
             (data.participant_type === 'resident' && data.house_number) ||
@@ -224,10 +226,17 @@ export function PendingApprovalScreen() {
 
       <div className="auth-card glassmorphic">
         <div className="status-header animate-fade-in">
-          <div className="status-badge pending">
-            <Clock className="badge-icon spin-subtle" />
-            <span>{t('waiting_room.awaiting_verification')}</span>
-          </div>
+          {savedParticipantType ? (
+            <div className="status-badge pending">
+              <Clock className="badge-icon spin-subtle" />
+              <span>{t('waiting_room.awaiting_verification')}</span>
+            </div>
+          ) : (
+            <div className="status-badge unsubmitted">
+              <Clock className="badge-icon" />
+              <span>{t('waiting_room.profile_incomplete')}</span>
+            </div>
+          )}
           <h1 className="portal-title">{t('waiting_room.title')}</h1>
           <p className="portal-subtitle">
             {t('waiting_room.welcome', { name: maskName(user?.user_metadata?.full_name || user?.email || '', isDemoMode) })}
