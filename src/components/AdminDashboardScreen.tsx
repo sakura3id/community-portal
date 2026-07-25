@@ -32,7 +32,7 @@ interface Profile {
   avatar_url: string;
   house_number: string;
   whatsapp_number: string;
-  approval_status: 'pending' | 'approved' | 'suspended' | 'rejected';
+  approval_status: 'unsubmitted' | 'pending' | 'approved' | 'suspended' | 'rejected';
   participant_type?: 'resident' | 'non_resident';
   resident_subtype?: 'owner' | 'renter' | 'household_member' | 'caretaker' | null;
   requested_affiliation?: string | null;
@@ -1619,6 +1619,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
                     style={{ width: '150px', margin: 0, padding: '10px 14px' }}
                   >
                     <option value="all">All Statuses</option>
+                    <option value="unsubmitted">Unsubmitted</option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="suspended">Suspended</option>
@@ -1971,7 +1972,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
                                       </button>
                                     )}
  
-                                    {profile.approval_status === 'pending' && (
+                                    {(profile.approval_status === 'pending' || profile.approval_status === 'unsubmitted') && (
                                       <>
                                         <button 
                                           onClick={() => handleApproveResident(profile)}

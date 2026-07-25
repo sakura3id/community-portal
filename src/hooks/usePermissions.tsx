@@ -98,6 +98,12 @@ export function usePermissions(): Permissions {
           setIsRejected(true);
           setCanReadFiles(false);
           setCanUploadFiles(false);
+        } else if (dbStatus === 'unsubmitted') {
+          // Explicitly unsubmitted (waiting room questionnaire state)
+          setIsApproved(false);
+          setIsRejected(false);
+          setCanReadFiles(false);
+          setCanUploadFiles(false);
         } else {
           // FALLBACK COMPATIBILITY LOGIC:
           // If approval_status is 'pending' or not present in the DB schema,

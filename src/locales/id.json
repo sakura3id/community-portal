@@ -2,6 +2,7 @@
   "waiting_room": {
     "title": "Ruang Tunggu",
     "awaiting_verification": "Menunggu Verifikasi",
+    "profile_incomplete": "Profil Belum Lengkap",
     "welcome": "Selamat datang, {name}",
     "loading": "Memuat detail pendaftaran Anda...",
     "submitted_title": "Data Pendaftaran Terkirim",

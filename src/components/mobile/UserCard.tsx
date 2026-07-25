@@ -11,7 +11,7 @@ export interface UserProfileItem {
   avatar_url?: string;
   house_number?: string;
   whatsapp_number?: string;
-  approval_status: 'pending' | 'approved' | 'suspended' | 'rejected';
+  approval_status: 'unsubmitted' | 'pending' | 'approved' | 'suspended' | 'rejected';
   participant_type?: 'resident' | 'non_resident';
   resident_subtype?: 'owner' | 'renter' | 'household_member' | 'caretaker' | null;
   requested_affiliation?: string | null;
@@ -44,6 +44,7 @@ export function UserCard({
   const phone = profile.whatsapp_number ? maskPhone(profile.whatsapp_number, isDemoMode) : null;
 
   const isPending = profile.approval_status === 'pending';
+  const isUnsubmitted = profile.approval_status === 'unsubmitted';
   const isApproved = profile.approval_status === 'approved';
 
   return (
@@ -98,6 +99,8 @@ export function UserCard({
               ? 'approved'
               : isPending
               ? 'pending'
+              : isUnsubmitted
+              ? 'unsubmitted'
               : 'suspended'
           }
         />
@@ -138,7 +141,7 @@ export function UserCard({
 
       {canManage && (onEdit || onManageHouses || onSuspend || onApprove) && (
         <div className="btn-row-mobile" style={{ marginTop: '12px' }}>
-          {isPending && onApprove && (
+          {(isPending || isUnsubmitted) && onApprove && (
             <button
               type="button"
               className="btn-mobile btn-mobile-primary"
