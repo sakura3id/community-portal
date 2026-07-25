@@ -32,7 +32,6 @@ export function PendingApprovalScreen() {
   const [savedHouseNumber, setSavedHouseNumber] = useState<string | null>(null);
   const [savedWhatsappNumber, setSavedWhatsappNumber] = useState<string | null>(null);
   const [savedRequestedAffiliation, setSavedRequestedAffiliation] = useState<string | null>(null);
-  const [dbStatus, setDbStatus] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
@@ -57,7 +56,6 @@ export function PendingApprovalScreen() {
         if (error) throw error;
 
         if (data) {
-          setDbStatus(data.approval_status);
           // Check if onboarding details have actually been submitted
           const hasSubmitted =
             (data.participant_type === 'resident' && data.house_number) ||
