@@ -41,17 +41,21 @@ export function MobileHubScreen({
       window.location.hostname.endsWith('.lvh.me') ||
       window.location.hostname === 'localhost');
 
+  const currentDomainSuffix = typeof window !== 'undefined' && window.location.hostname.endsWith('.sakura3.my.id')
+    ? 'sakura3.my.id'
+    : 'sakura3.id';
+
   const iplFinderUrl = isLocal
     ? import.meta.env.VITE_IPL_FINDER_URL || 'http://ipl-finder.localtest.me:8080'
-    : import.meta.env.VITE_IPL_FINDER_URL || 'https://ipl-finder.sakura3.id';
+    : import.meta.env.VITE_IPL_FINDER_URL || `https://ipl-finder.${currentDomainSuffix}`;
 
   const rekapViewerUrl = isLocal
     ? import.meta.env.VITE_REKAP_VIEWER_URL || 'http://rekap.localtest.me:3000'
-    : import.meta.env.VITE_REKAP_VIEWER_URL || 'https://rekap.sakura3.id';
+    : import.meta.env.VITE_REKAP_VIEWER_URL || `https://rekap.${currentDomainSuffix}`;
 
   const communityDocsUrl = isLocal
     ? import.meta.env.VITE_COMMUNITY_DOCS_URL || 'http://docs.localtest.me:3001'
-    : import.meta.env.VITE_COMMUNITY_DOCS_URL || 'https://docs.sakura3.id';
+    : import.meta.env.VITE_COMMUNITY_DOCS_URL || `https://docs.${currentDomainSuffix}`;
 
   const apps: ApplicationItem[] = [
     {

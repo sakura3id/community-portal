@@ -35,6 +35,9 @@ const getCookieDomain = (): string => {
   if (hostname.endsWith('.sakura3.id') || hostname === 'sakura3.id') {
     return '.sakura3.id';
   }
+  if (hostname.endsWith('.sakura3.my.id') || hostname === 'sakura3.my.id') {
+    return '.sakura3.my.id';
+  }
   if (hostname.endsWith('.veryresto.com') || hostname === 'veryresto.com') {
     return '.veryresto.com';
   }
