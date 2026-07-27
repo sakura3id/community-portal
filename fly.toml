@@ -10,9 +10,9 @@ primary_region = "sin" # Singapore (closest region to UTC+7)
     VITE_SUPABASE_URL = "https://lfxkabhzfgenpqfnhjyw.supabase.co"
     VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_jtADEBQ9FAYPaSqU5iabtg_m356QDIw"
     # Add staging URLs here:
-    VITE_IPL_FINDER_URL = "https://ipl-finder.veryresto.com"
-    VITE_REKAP_VIEWER_URL = "https://rekap.veryresto.com"
-    VITE_COMMUNITY_DOCS_URL = "https://info.veryresto.com"
+    VITE_IPL_FINDER_URL = "https://ipl-finder.sakura3.my.id"
+    VITE_REKAP_VIEWER_URL = "https://rekap.sakura3.my.id"
+    VITE_COMMUNITY_DOCS_URL = "https://info.sakura3.my.id"
 
 [http_service]
   internal_port = 80
