@@ -41,8 +41,8 @@ export function MobileHubScreen({
       window.location.hostname.endsWith('.lvh.me') ||
       window.location.hostname === 'localhost');
 
-  const currentDomainSuffix = typeof window !== 'undefined' && window.location.hostname.endsWith('.sakura3.my.id')
-    ? 'sakura3.my.id'
+  const currentDomainSuffix = typeof window !== 'undefined' && window.location.hostname.endsWith('.sr3.my.id')
+    ? 'sr3.my.id'
     : 'sakura3.id';
 
   const iplFinderUrl = isLocal
