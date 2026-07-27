@@ -18,15 +18,15 @@ This is the **single sign-on portal** for all Sakura 3 resident applications. It
 - **Role & permission management** — admins assign app-level roles to residents via the Admin Center
 - **Session propagation** — sets the `sakura3-auth` cookie on `.sakura3.id` so all subdomains share the same session
 
-### Ecosystem Apps
+### Environments & Domains
 
-| App | URL | Status |
-|---|---|---|
-| Community Portal (this) | `portal.sakura3.id` | ✅ Live |
-| IPL Finder | `ipl-finder.sakura3.id` | ✅ Live |
-| Rekap Viewer | `rekap.sakura3.id` | ✅ Live |
-| Kas Management | — | 📋 Planned |
-| Surat Administration | — | 📋 Planned |
+The platform supports local development, staging, and production environments across the following domains:
+
+| Environment | Base Domain | Portal URL | IPL Finder URL | Rekap Viewer URL |
+| :--- | :--- | :--- | :--- | :--- |
+| **Local Development** | `*.localtest.me` | `http://portal.localtest.me:5173` | `http://ipl-finder.localtest.me:8080` | `http://rekap.localtest.me:3000` |
+| **Staging** | `*.sr3.my.id` | `https://portal.sr3.my.id` | `https://ipl-finder.sr3.my.id` | `https://rekap.sr3.my.id` |
+| **Production** | `*.sakura3.id` | `https://portal.sakura3.id` | `https://ipl-finder.sakura3.id` | `https://rekap.sakura3.id` |
 
 ---
 
@@ -130,11 +130,11 @@ VITE_REKAP_VIEWER_URL="https://rekap.sakura3.id"
 
 Deployed to Fly.io via Docker + nginx.
 
-### Deploy Staging (`veryresto.com`)
+### Deploy Staging (`sr3.my.id`)
 ```bash
 npm run deploy:staging
 ```
-Config: [`fly.toml`](./fly.toml) — app name `community-veryresto`.
+Config: [`fly.toml`](./fly.toml) — app name `community-veryresto` (routes to `portal.sr3.my.id`).
 
 ### Deploy Production (`sakura3.id`)
 ```bash
