@@ -91,6 +91,12 @@ const ALLOWED_ORIGINS = [
   'https://docs.sakura3.id',
   'https://info.sakura3.id',
 
+  'https://rekap.sr3.my.id',
+  'https://ipl-finder.sr3.my.id',
+  'https://portal.sr3.my.id',
+  'https://docs.sr3.my.id',
+  'https://info.sr3.my.id',
+
   'https://rekap.veryresto.com',
   'https://portal.veryresto.com'
 ];
