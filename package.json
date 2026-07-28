@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "deploy:staging": "fly deploy --build-arg VITE_GIT_SHA=$(git rev-parse HEAD) --build-arg VITE_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg VITE_APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '')",
     "deploy:prod": "fly deploy -c fly.production.toml --build-arg VITE_GIT_SHA=$(git rev-parse HEAD) --build-arg VITE_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg VITE_APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo '')",
-    "supabase:link:staging": "npx supabase link --project-ref lfxkabhzfgenpqfnhjyw",
+    "supabase:link:staging": "npx supabase link --project-ref zhpwhoiigwwgpxvsubdb",
     "supabase:link:prod": "npx supabase link --project-ref cycloiewvrajoeosahtd",
     "supabase:current": "npx supabase projects list"
   },

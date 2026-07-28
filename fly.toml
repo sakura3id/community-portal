@@ -7,8 +7,8 @@ primary_region = "sin" # Singapore (closest region to UTC+7)
   # Uses the local Dockerfile we created
   dockerfile = "Dockerfile"
   [build.args]
-    VITE_SUPABASE_URL = "https://lfxkabhzfgenpqfnhjyw.supabase.co"
-    VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_jtADEBQ9FAYPaSqU5iabtg_m356QDIw"
+    VITE_SUPABASE_URL = "https://zhpwhoiigwwgpxvsubdb.supabase.co"
+    VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8gdVtK4TbhQu6nR5AJQlsw_-cFWTLvF"
     # Add staging URLs here:
     VITE_IPL_FINDER_URL = "https://ipl-finder.sr3.my.id"
     VITE_REKAP_VIEWER_URL = "https://rekap.sr3.my.id"
