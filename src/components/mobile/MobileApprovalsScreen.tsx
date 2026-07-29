@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserCheck, ChevronLeft, ChevronRight, Home, Star, Trash2, Plus } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import { StatCard } from './StatCard';
 import type { StatItem } from './StatCard';
 import { SearchBar } from './SearchBar';
@@ -103,14 +104,41 @@ export function MobileApprovalsScreen({
   // House Affiliation Management State
   const [managingProfile, setManagingProfile] = useState<UserProfileItem | null>(null);
   const [newHouseNumber, setNewHouseNumber] = useState('');
+  const [newHouseSearch, setNewHouseSearch] = useState('');
+  const [showNewHouseDropdown, setShowNewHouseDropdown] = useState(false);
   const [newAffType, setNewAffType] = useState<string>('household_member');
   const [newIsPrimary, setNewIsPrimary] = useState(false);
   const [affError, setAffError] = useState<string | null>(null);
   const [affLoading, setAffLoading] = useState(false);
 
+  // House options from master table
+  const [houseOptions, setHouseOptions] = useState<string[]>([]);
+  const [editHouseSearch, setEditHouseSearch] = useState('');
+  const [showEditHouseDropdown, setShowEditHouseDropdown] = useState(false);
+
+  useEffect(() => {
+    const fetchHouses = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('houses')
+          .select('house_number')
+          .order('house_number', { ascending: true });
+        if (error) throw error;
+        if (data) {
+          setHouseOptions(data.map(h => h.house_number));
+        }
+      } catch (err) {
+        console.error('Error fetching houses:', err);
+      }
+    };
+    fetchHouses();
+  }, []);
+
   const handleManageHouses = (profile: UserProfileItem) => {
     setManagingProfile(profile);
     setNewHouseNumber('');
+    setNewHouseSearch('');
+    setShowNewHouseDropdown(false);
     setNewAffType('household_member');
     setNewIsPrimary(false);
     setAffError(null);
@@ -181,6 +209,8 @@ export function MobileApprovalsScreen({
       resident_subtype: p.resident_subtype || 'owner',
       requested_affiliation: p.requested_affiliation || '',
     });
+    setEditHouseSearch(p.house_number || '');
+    setShowEditHouseDropdown(false);
   };
 
   const handleSaveEdit = async (e: React.FormEvent) => {
@@ -400,14 +430,62 @@ export function MobileApprovalsScreen({
                   <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
                     House Number
                   </label>
-                  <input
-                    type="text"
-                    className="search-input-mobile"
-                    value={editForm.house_number}
-                    onChange={(e) => setEditForm({ ...editForm, house_number: e.target.value })}
-                    placeholder="e.g. W31"
-                    style={{ marginTop: '4px' }}
-                  />
+                  <div style={{ position: 'relative', marginTop: '4px' }}>
+                    <input
+                      type="text"
+                      className="search-input-mobile"
+                      value={editHouseSearch}
+                      onChange={(e) => {
+                        setEditHouseSearch(e.target.value);
+                        setEditForm({ ...editForm, house_number: '' });
+                        setShowEditHouseDropdown(true);
+                      }}
+                      onFocus={() => setShowEditHouseDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowEditHouseDropdown(false), 200)}
+                      placeholder="Search house number..."
+                    />
+                    {showEditHouseDropdown && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: 0,
+                        right: 0,
+                        maxHeight: '150px',
+                        overflowY: 'auto',
+                        background: 'var(--bg-primary)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginTop: '4px',
+                        zIndex: 50,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      }}>
+                        {houseOptions.filter(num => num.toLowerCase().startsWith(editHouseSearch.toLowerCase())).length === 0 ? (
+                          <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-muted)' }}>No matching houses</div>
+                        ) : (
+                          houseOptions
+                            .filter(num => num.toLowerCase().startsWith(editHouseSearch.toLowerCase()))
+                            .map(num => (
+                              <div
+                                key={num}
+                                onMouseDown={() => {
+                                  setEditForm({ ...editForm, house_number: num });
+                                  setEditHouseSearch(num);
+                                }}
+                                style={{
+                                  padding: '8px 12px',
+                                  fontSize: '13px',
+                                  cursor: 'pointer',
+                                  background: editForm.house_number === num ? 'var(--primary-glow)' : 'transparent',
+                                  fontWeight: editForm.house_number === num ? 600 : 400,
+                                }}
+                              >
+                                {num}
+                              </div>
+                            ))
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>
@@ -589,14 +667,62 @@ export function MobileApprovalsScreen({
                     <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
                       House Number
                     </label>
-                    <input
-                      type="text"
-                      className="search-input-mobile"
-                      value={newHouseNumber}
-                      onChange={(e) => setNewHouseNumber(e.target.value)}
-                      placeholder="e.g. V11, D5, W31"
-                      style={{ textTransform: 'uppercase' }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        className="search-input-mobile"
+                        value={newHouseSearch}
+                        onChange={(e) => {
+                          setNewHouseSearch(e.target.value);
+                          setNewHouseNumber('');
+                          setShowNewHouseDropdown(true);
+                        }}
+                        onFocus={() => setShowNewHouseDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowNewHouseDropdown(false), 200)}
+                        placeholder="Search house number..."
+                      />
+                      {showNewHouseDropdown && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          maxHeight: '150px',
+                          overflowY: 'auto',
+                          background: 'var(--bg-primary)',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '8px',
+                          marginTop: '4px',
+                          zIndex: 50,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        }}>
+                          {houseOptions.filter(num => num.toLowerCase().startsWith(newHouseSearch.toLowerCase())).length === 0 ? (
+                            <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-muted)' }}>No matching houses</div>
+                          ) : (
+                            houseOptions
+                              .filter(num => num.toLowerCase().startsWith(newHouseSearch.toLowerCase()))
+                              .map(num => (
+                                <div
+                                  key={num}
+                                  onMouseDown={() => {
+                                    setNewHouseNumber(num);
+                                    setNewHouseSearch(num);
+                                  }}
+                                  style={{
+                                    padding: '8px 12px',
+                                    fontSize: '13px',
+                                    cursor: 'pointer',
+                                    background: newHouseNumber === num ? 'var(--primary-glow)' : 'transparent',
+                                    fontWeight: newHouseNumber === num ? 600 : 400,
+                                  }}
+                                >
+                                  {num}
+                                </div>
+                              ))
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {managingProfile.participant_type === 'resident' && (
