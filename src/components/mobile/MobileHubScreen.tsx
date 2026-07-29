@@ -85,24 +85,6 @@ export function MobileHubScreen({
       badgeText: 'Live',
       link: communityDocsUrl,
     },
-    {
-      name: 'Kas Management',
-      slug: 'kas_management',
-      description: t('landing.apps.kas_management.description'),
-      icon: HelpCircle,
-      status: 'planned',
-      badgeText: t('landing.coming_soon'),
-      link: null,
-    },
-    {
-      name: 'Surat Administration',
-      slug: 'surat_admin',
-      description: t('landing.apps.surat_admin.description'),
-      icon: HelpCircle,
-      status: 'planned',
-      badgeText: t('landing.coming_soon'),
-      link: null,
-    },
   ];
 
   return (

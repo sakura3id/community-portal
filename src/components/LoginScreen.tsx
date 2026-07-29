@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Shield, KeyRound, ArrowRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { t } from '../lib/i18n';
+import { buildInfo } from '../generated/build-info';
 
 export function LoginScreen() {
   const { signInWithGoogle, signInAsDemo } = useAuth();
@@ -146,25 +147,34 @@ export function LoginScreen() {
           )}
         </div>
 
-        <div className="card-footer">
+        {/* <div className="card-footer">
           <p>{t('login.footer_notice')}</p>
-        </div>
+        </div> */}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', marginTop: '32px', fontSize: '13px', color: 'var(--text-muted)', animation: 'fadeIn 0.8s ease-out' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: 'var(--success)' }}></div>
-          <span>Secure</span>
+      {/* Build Footer */}
+      <footer
+        style={{
+          marginTop: '32px',
+          paddingTop: '16px',
+          borderTop: '1px solid var(--border-color)',
+          textAlign: 'center',
+          fontSize: '11px',
+          color: 'var(--text-muted)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <div>
+          <span>{buildInfo.appName}</span> • <span>v{buildInfo.version}</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: 'var(--primary)' }}></div>
-          <span>Portal Hub</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ height: '8px', width: '8px', borderRadius: '50%', backgroundColor: 'var(--pending)' }}></div>
-          <span>Verified Access</span>
-        </div>
-      </div>
+        {buildInfo.gitCommitSha && buildInfo.gitCommitSha !== 'unknown' && (
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', opacity: 0.8 }}>
+            Commit: {buildInfo.gitCommitSha.substring(0, 7)}
+          </div>
+        )}
+      </footer>
     </div>
   </div>
 );
