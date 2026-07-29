@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import { UserCheck, ChevronLeft, ChevronRight, Home, Star, Trash2, Plus } from 'lucide-react';
 import { StatCard } from './StatCard';
 import type { StatItem } from './StatCard';
 import { SearchBar } from './SearchBar';
@@ -30,6 +30,9 @@ interface MobileApprovalsScreenProps {
   onApproveProfile: (profile: UserProfileItem) => Promise<void>;
   onSuspendProfile: (profile: UserProfileItem, reason: string) => Promise<void>;
   onUpdateProfile: (profileId: string, data: any) => Promise<void>;
+  onAddAffiliation?: (profileId: string, houseNumber: string, affiliationType: string, isPrimary: boolean, participantType: string) => Promise<void>;
+  onDeleteAffiliation?: (profileId: string, affId: string, isPrimary: boolean, remainingAffs: any[]) => Promise<void>;
+  onSetPrimaryAffiliation?: (profileId: string, aff: any) => Promise<void>;
   canManage: boolean;
 }
 
@@ -50,6 +53,9 @@ export function MobileApprovalsScreen({
   onApproveProfile,
   onSuspendProfile,
   onUpdateProfile,
+  onAddAffiliation,
+  onDeleteAffiliation,
+  onSetPrimaryAffiliation,
   canManage,
 }: MobileApprovalsScreenProps) {
   // Stat calculations
@@ -93,6 +99,78 @@ export function MobileApprovalsScreen({
 
   // Filter Drawer State
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
+
+  // House Affiliation Management State
+  const [managingProfile, setManagingProfile] = useState<UserProfileItem | null>(null);
+  const [newHouseNumber, setNewHouseNumber] = useState('');
+  const [newAffType, setNewAffType] = useState<string>('household_member');
+  const [newIsPrimary, setNewIsPrimary] = useState(false);
+  const [affError, setAffError] = useState<string | null>(null);
+  const [affLoading, setAffLoading] = useState(false);
+
+  const handleManageHouses = (profile: UserProfileItem) => {
+    setManagingProfile(profile);
+    setNewHouseNumber('');
+    setNewAffType('household_member');
+    setNewIsPrimary(false);
+    setAffError(null);
+  };
+
+  const handleAddNewAffiliation = async () => {
+    if (!managingProfile || !onAddAffiliation) return;
+    if (!newHouseNumber.trim()) {
+      setAffError('House number is required');
+      return;
+    }
+    setAffLoading(true);
+    setAffError(null);
+    try {
+      await onAddAffiliation(
+        managingProfile.id,
+        newHouseNumber.trim().toUpperCase(),
+        newAffType,
+        newIsPrimary,
+        managingProfile.participant_type || 'resident'
+      );
+      setManagingProfile(null);
+    } catch (err: any) {
+      setAffError(err.message || 'Failed to add affiliation');
+    } finally {
+      setAffLoading(false);
+    }
+  };
+
+  const handleRemoveAffiliation = async (affId: string, isPrimary: boolean) => {
+    if (!managingProfile || !onDeleteAffiliation) return;
+    setAffLoading(true);
+    try {
+      await onDeleteAffiliation(
+        managingProfile.id,
+        affId,
+        isPrimary,
+        managingProfile.profile_house_affiliations || []
+      );
+      // Refresh the managing profile from updated profiles list
+      setManagingProfile(null);
+    } catch (err: any) {
+      setAffError(err.message || 'Failed to remove affiliation');
+    } finally {
+      setAffLoading(false);
+    }
+  };
+
+  const handleSetPrimary = async (aff: any) => {
+    if (!managingProfile || !onSetPrimaryAffiliation) return;
+    setAffLoading(true);
+    try {
+      await onSetPrimaryAffiliation(managingProfile.id, aff);
+      setManagingProfile(null);
+    } catch (err: any) {
+      setAffError(err.message || 'Failed to set primary');
+    } finally {
+      setAffLoading(false);
+    }
+  };
 
   const handleStartEdit = (p: UserProfileItem) => {
     setEditingProfile(p);
@@ -185,6 +263,7 @@ export function MobileApprovalsScreen({
               profile={profile}
               canManage={canManage}
               onEdit={handleStartEdit}
+              onManageHouses={onAddAffiliation ? handleManageHouses : undefined}
               onApprove={onApproveProfile}
               onSuspend={(p) => setSuspendingProfile(p)}
             />
@@ -397,6 +476,177 @@ export function MobileApprovalsScreen({
         isDanger
         loading={suspendLoading}
       />
+
+      {/* Manage House Affiliations Bottom Sheet */}
+      <BottomSheet
+        isOpen={!!managingProfile}
+        onClose={() => setManagingProfile(null)}
+        title="Manage House Affiliations"
+      >
+        {managingProfile && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {/* Profile header */}
+            <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+              <strong>{managingProfile.full_name || managingProfile.email}</strong>
+              <span style={{ marginLeft: '8px', color: 'var(--text-muted)' }}>
+                ({managingProfile.participant_type})
+              </span>
+            </div>
+
+            {/* Current Affiliations */}
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-secondary)' }}>
+                Current Affiliations
+              </h4>
+              {(!managingProfile.profile_house_affiliations || managingProfile.profile_house_affiliations.length === 0) ? (
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  No house affiliations yet
+                </p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {managingProfile.profile_house_affiliations.map((aff: any) => (
+                    <div
+                      key={aff.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '10px 12px',
+                        borderRadius: '10px',
+                        background: aff.is_primary ? 'var(--success-bg)' : 'var(--bg-secondary)',
+                        border: aff.is_primary ? '1px solid var(--success)' : '1px solid var(--border-color)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Home size={14} style={{ color: aff.is_primary ? 'var(--success)' : 'var(--text-muted)' }} />
+                        <div>
+                          <span style={{ fontSize: '13px', fontWeight: 600 }}>
+                            {aff.houses?.house_number || 'Unknown'}
+                          </span>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '6px' }}>
+                            {aff.affiliation_type}
+                          </span>
+                          {aff.is_primary && (
+                            <span style={{ fontSize: '10px', color: 'var(--success)', marginLeft: '6px', fontWeight: 700 }}>
+                              PRIMARY
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {!aff.is_primary && onSetPrimaryAffiliation && (
+                          <button
+                            type="button"
+                            onClick={() => handleSetPrimary(aff)}
+                            disabled={affLoading}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'var(--primary)',
+                              padding: '4px',
+                            }}
+                            title="Set as primary"
+                          >
+                            <Star size={14} />
+                          </button>
+                        )}
+                        {onDeleteAffiliation && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveAffiliation(aff.id, aff.is_primary)}
+                            disabled={affLoading}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'var(--danger)',
+                              padding: '4px',
+                            }}
+                            title="Remove affiliation"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Add New Affiliation */}
+            {onAddAffiliation && (
+              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '14px' }}>
+                <h4 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Plus size={14} />
+                  Add New Affiliation
+                </h4>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                      House Number
+                    </label>
+                    <input
+                      type="text"
+                      className="search-input-mobile"
+                      value={newHouseNumber}
+                      onChange={(e) => setNewHouseNumber(e.target.value)}
+                      placeholder="e.g. V11, D5, W31"
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </div>
+
+                  {managingProfile.participant_type === 'resident' && (
+                    <div>
+                      <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                        Relationship Type
+                      </label>
+                      <select
+                        className="search-input-mobile"
+                        value={newAffType}
+                        onChange={(e) => setNewAffType(e.target.value)}
+                      >
+                        <option value="owner">Owner</option>
+                        <option value="renter">Renter</option>
+                        <option value="household_member">Household Member</option>
+                        <option value="caretaker">Caretaker</option>
+                      </select>
+                    </div>
+                  )}
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    <input
+                      type="checkbox"
+                      checked={newIsPrimary}
+                      onChange={(e) => setNewIsPrimary(e.target.checked)}
+                    />
+                    Set as primary residence
+                  </label>
+
+                  {affError && (
+                    <p style={{ fontSize: '12px', color: 'var(--danger)', margin: 0 }}>
+                      {affError}
+                    </p>
+                  )}
+
+                  <button
+                    type="button"
+                    className="btn-mobile btn-mobile-primary"
+                    onClick={handleAddNewAffiliation}
+                    disabled={affLoading}
+                    style={{ marginTop: '4px' }}
+                  >
+                    {affLoading ? 'Adding...' : 'Add Affiliation'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </BottomSheet>
     </div>
   );
 }

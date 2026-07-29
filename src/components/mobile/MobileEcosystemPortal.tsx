@@ -155,7 +155,7 @@ export function MobileEcosystemPortal() {
       if (activeTab === 'approvals') {
         let query = supabase
           .from('profiles')
-          .select('*', { count: 'exact' })
+          .select('*, profile_house_affiliations(*, houses(house_number))', { count: 'exact' })
           .not('participant_type', 'is', null);
 
         if (filterStatus !== 'all') {
@@ -333,6 +333,112 @@ export function MobileEcosystemPortal() {
     }
   };
 
+  // Handlers for House Affiliation Management
+  const handleAddAffiliation = async (
+    profileId: string,
+    houseNumber: string,
+    affiliationType: string,
+    isPrimary: boolean,
+    participantType: string
+  ) => {
+    const { data: houseData } = await supabase
+      .from('houses')
+      .select('id')
+      .eq('house_number', houseNumber)
+      .maybeSingle();
+
+    if (!houseData) throw new Error('Invalid house number');
+
+    if (isPrimary) {
+      await supabase
+        .from('profile_house_affiliations')
+        .update({ is_primary: false })
+        .eq('profile_id', profileId);
+    }
+
+    const targetAffType = participantType === 'resident' ? affiliationType : 'caretaker';
+
+    const { error } = await supabase
+      .from('profile_house_affiliations')
+      .insert({
+        profile_id: profileId,
+        house_id: houseData.id,
+        affiliation_type: targetAffType,
+        is_primary: isPrimary,
+      });
+
+    if (error) throw error;
+
+    if (isPrimary) {
+      await supabase
+        .from('profiles')
+        .update({ house_number: houseNumber, resident_subtype: targetAffType })
+        .eq('id', profileId);
+    }
+
+    await logGovernanceAction(profileId, 'AFFILIATION_ADDED', `Added ${targetAffType} affiliation for house ${houseNumber}`, '');
+    await fetchData();
+  };
+
+  const handleDeleteAffiliation = async (profileId: string, affId: string, isPrimary: boolean, remainingAffs: any[]) => {
+    const { error } = await supabase
+      .from('profile_house_affiliations')
+      .delete()
+      .eq('id', affId);
+
+    if (error) throw error;
+
+    if (isPrimary) {
+      const remaining = remainingAffs.filter(a => a.id !== affId);
+      if (remaining.length > 0) {
+        await supabase
+          .from('profile_house_affiliations')
+          .update({ is_primary: true })
+          .eq('id', remaining[0].id);
+        await supabase
+          .from('profiles')
+          .update({
+            house_number: remaining[0].houses?.house_number || null,
+            resident_subtype: remaining[0].affiliation_type || null,
+          })
+          .eq('id', profileId);
+      } else {
+        await supabase
+          .from('profiles')
+          .update({ house_number: null, resident_subtype: null })
+          .eq('id', profileId);
+      }
+    }
+
+    await logGovernanceAction(profileId, 'AFFILIATION_REMOVED', 'Removed house affiliation', '');
+    await fetchData();
+  };
+
+  const handleSetPrimaryAffiliation = async (profileId: string, aff: any) => {
+    await supabase
+      .from('profile_house_affiliations')
+      .update({ is_primary: false })
+      .eq('profile_id', profileId);
+
+    const { error } = await supabase
+      .from('profile_house_affiliations')
+      .update({ is_primary: true })
+      .eq('id', aff.id);
+
+    if (error) throw error;
+
+    await supabase
+      .from('profiles')
+      .update({
+        house_number: aff.houses?.house_number || null,
+        resident_subtype: aff.affiliation_type || null,
+      })
+      .eq('id', profileId);
+
+    await logGovernanceAction(profileId, 'PRIMARY_AFFILIATION_CHANGED', `Set primary to ${aff.houses?.house_number}`, '');
+    await fetchData();
+  };
+
   // Handlers for Roles
   const handlePromoteRole = async (userId: string, targetRole: 'resident_verifier' | 'platform_moderator', email: string) => {
     try {
@@ -433,6 +539,9 @@ export function MobileEcosystemPortal() {
             onApproveProfile={handleApproveProfile}
             onSuspendProfile={handleSuspendProfile}
             onUpdateProfile={handleUpdateProfile}
+            onAddAffiliation={handleAddAffiliation}
+            onDeleteAffiliation={handleDeleteAffiliation}
+            onSetPrimaryAffiliation={handleSetPrimaryAffiliation}
             canManage={isAdmin || isVerifier}
           />
         )}
