@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { LogOut, CheckCircle2, FileText, LayoutGrid, FolderOpen, HelpCircle } from 'lucide-react';
+import { LogOut, CheckCircle2, FileText, LayoutGrid, FolderOpen } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { usePermissions } from '../../hooks/usePermissions';
 import { ProfileCard } from './ProfileCard';
