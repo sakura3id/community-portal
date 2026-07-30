@@ -3,7 +3,6 @@ name: Deploy to Staging
 on:
   push:
     tags:
-      - 'v*'           # e.g. v1.2.3, v2.0.0-rc.1
       - 'staging-*'    # e.g. staging-2026-07-30
   workflow_dispatch:
 
