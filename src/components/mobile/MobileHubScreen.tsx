@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { usePermissions } from '../../hooks/usePermissions';
 import { ProfileCard } from './ProfileCard';
 import { AppCard } from './AppCard';
+import { ThemeToggle } from './ThemeToggle';
 import type { ApplicationItem } from './AppCard';
 import { t } from '../../lib/i18n';
 import { buildInfo } from '../../generated/build-info';
@@ -118,16 +119,19 @@ export function MobileHubScreen({
           </p>
         </div>
 
-        <button
-          type="button"
-          className="btn-mobile"
-          onClick={signOut}
-          aria-label="Sign out"
-          style={{ height: '36px', minHeight: '36px', padding: '0 10px', fontSize: '12px' }}
-        >
-          <LogOut size={16} />
-          <span>Sign out</span>
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <ThemeToggle />
+          <button
+            type="button"
+            className="btn-mobile"
+            onClick={signOut}
+            aria-label="Sign out"
+            style={{ height: '36px', minHeight: '36px', padding: '0 10px', fontSize: '12px' }}
+          >
+            <LogOut size={16} />
+            <span>Sign out</span>
+          </button>
+        </div>
       </header>
 
       {/* User Profile Card */}

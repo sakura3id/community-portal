@@ -133,5 +133,11 @@
     "demo_banner_desc": "Anda sedang menjelajahi aplikasi dengan akun demo read-only.",
     "footer_notice": "Dilindungi oleh kebijakan tata tertib lingkungan. Akses tidak sah akan dicatat.",
     "auth_failed": "Autentikasi gagal. Silakan coba lagi."
+  },
+  "theme": {
+    "light": "Terang",
+    "dark": "Gelap",
+    "system": "Sistem",
+    "toggle_label": "Ubah tema"
   }
 }

@@ -1,5 +1,6 @@
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { usePermissions } from './hooks/usePermissions';
+import { ThemeProvider } from './hooks/useTheme';
 import { LoginScreen } from './components/LoginScreen';
 import { PendingApprovalScreen } from './components/PendingApprovalScreen';
 import { RejectedScreen } from './components/RejectedScreen';
@@ -116,8 +117,10 @@ const getValidatedRedirectUrl = (urlParam: string | null): string | null => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainAppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <MainAppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
