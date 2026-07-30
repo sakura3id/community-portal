@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
@@ -37,13 +37,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const userIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, currentSession) => {
+        const newUserId = currentSession?.user?.id ?? null;
+
+        // Always update the session (contains fresh tokens)
         setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+
+        // Only update user state if the user identity actually changed.
+        // This prevents unnecessary re-renders on TOKEN_REFRESHED events
+        // that happen every time the browser tab regains focus.
+        if (newUserId !== userIdRef.current) {
+          userIdRef.current = newUserId;
+          setUser(currentSession?.user ?? null);
+        }
+
         setLoading(false);
         if (currentSession?.user) {
           checkAndTrackSignUp(currentSession.user);
@@ -53,8 +65,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      const newUserId = currentSession?.user?.id ?? null;
+
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
+
+      if (newUserId !== userIdRef.current) {
+        userIdRef.current = newUserId;
+        setUser(currentSession?.user ?? null);
+      }
+
       setLoading(false);
 
       // Track last activity on app open

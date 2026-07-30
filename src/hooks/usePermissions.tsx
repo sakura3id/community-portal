@@ -17,6 +17,8 @@ interface Permissions {
 
 export function usePermissions(): Permissions {
   const { user } = useAuth();
+  const userId = user?.id ?? null;
+  const userEmail = user?.email ?? null;
   const [isAdmin, setIsAdmin] = useState(false);
   const [isVerifier, setIsVerifier] = useState(false);
   const [isModerator, setIsModerator] = useState(false);
@@ -28,7 +30,7 @@ export function usePermissions(): Permissions {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
+    if (!userId) {
       setIsAdmin(false);
       setIsVerifier(false);
       setIsModerator(false);
@@ -49,7 +51,7 @@ export function usePermissions(): Permissions {
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('house_number, approval_status')
-          .eq('id', user.id)
+          .eq('id', userId)
           .maybeSingle();
 
         if (profileError) {
@@ -63,12 +65,12 @@ export function usePermissions(): Permissions {
         const { data: rolesData } = await supabase
           .from('user_roles')
           .select('role')
-          .eq('user_id', user.id);
+          .eq('user_id', userId);
 
         const activeRoles = rolesData?.map(r => r.role) || [];
         
         const demoEmail = import.meta.env.VITE_DEMO_USER_EMAIL || 'demo@sakura3.id';
-        const isDemo = !!user && user.email === demoEmail;
+        const isDemo = !!userEmail && userEmail === demoEmail;
 
         const adminStatus = activeRoles.includes('admin') || isDemo;
         const verifierStatus = activeRoles.includes('resident_verifier') || isDemo;
@@ -117,7 +119,7 @@ export function usePermissions(): Permissions {
             const { data: permData } = await supabase
               .from('user_permissions')
               .select('permission')
-              .eq('user_id', user.id);
+              .eq('user_id', userId);
 
             const permissions = permData?.map((p) => p.permission) || [];
             
@@ -139,7 +141,7 @@ export function usePermissions(): Permissions {
     };
 
     fetchPermissions();
-  }, [user]);
+  }, [userId, userEmail]);
 
   const isGovernanceManager = isAdmin || isVerifier || isModerator;
 
