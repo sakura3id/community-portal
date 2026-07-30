@@ -133,5 +133,11 @@
     "demo_banner_desc": "You are exploring the application using a read-only demo account.",
     "footer_notice": "Protected by Community Governance policies. Unauthorized access is recorded.",
     "auth_failed": "Authentication failed. Please try again."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle_label": "Change theme"
   }
 }
