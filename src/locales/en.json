@@ -126,7 +126,7 @@
   "login": {
     "portal_subtitle": "Community Portal",
     "secure_entry": "Secure Identity Entry",
-    "description": "Sign in using your authorized community Google account to access Sakura 3 ecosystem applications (IPL Finder, Rekap, Docs).",
+    "description": "Sign in using your Google account to access Sakura 3 ecosystem apps (IPL Finder, Rekap, Docs).",
     "continue_with_google": "Continue with Google",
     "continue_as_demo": "Continue as Demo",
     "demo_banner_title": "Demo Mode",

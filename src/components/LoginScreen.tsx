@@ -65,7 +65,6 @@ export function LoginScreen() {
         <div className="info-divider"></div>
 
         <div className="content-section animate-slide-up">
-          <h2>{t('login.secure_entry')}</h2>
           <p className="description">
             {t('login.description')}
           </p>
