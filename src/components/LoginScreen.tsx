@@ -166,7 +166,7 @@ export function LoginScreen() {
         }}
       >
         <div>
-          <span>{buildInfo.appName}</span> • <span>v{buildInfo.version}</span>
+          <span>{buildInfo.appName}</span> • <span>{buildInfo.version}</span>
         </div>
         {buildInfo.gitCommitSha && buildInfo.gitCommitSha !== 'unknown' && (
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', opacity: 0.8 }}>

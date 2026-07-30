@@ -19,13 +19,10 @@ export function generate(specifiedMode) {
   // 1. Try to read version from environment variable (useful in Docker/CI context) or Git tags
   if (process.env.VITE_APP_VERSION) {
     version = process.env.VITE_APP_VERSION;
-    // Strip common tag prefixes to get a clean version string
-    // Handles: v1.2.3 -> 1.2.3, staging-v2.5.0 -> 2.5.0, staging-2.5.0 -> 2.5.0
-    version = version.replace(/^(staging-|release-|prod-)?v?/, '');
   } else {
     try {
       const gitTag = execSync('git describe --tags --abbrev=0').toString().trim();
-      version = gitTag.replace(/^(staging-|release-|prod-)?v?/, '');
+      version = gitTag;
     } catch (err) {
       // Fallback to package.json version if git describe fails (e.g. no tags or no git)
       try {
