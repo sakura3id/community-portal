@@ -12,6 +12,8 @@ import { BottomSheet } from './BottomSheet';
 import { ConfirmationDialog } from './ConfirmationDialog';
 import { EmptyState } from './EmptyState';
 import { triggerHapticFeedback } from './BottomTabBar';
+import { useDemoMode } from '../../hooks/useDemoMode';
+import { maskName } from '../../lib/masking';
 
 interface MobileApprovalsScreenProps {
   profiles: UserProfileItem[];
@@ -61,6 +63,7 @@ export function MobileApprovalsScreen({
 }: MobileApprovalsScreenProps) {
   // Stat calculations
   const totalPages = Math.ceil(totalCount / pageSize) || 1;
+  const { isDemoMode } = useDemoMode();
 
   const stats: StatItem[] = [
     { id: 'all', label: 'Total Records', value: totalCount, color: 'var(--primary)' },
@@ -145,6 +148,7 @@ export function MobileApprovalsScreen({
   };
 
   const handleAddNewAffiliation = async () => {
+    if (isDemoMode) return;
     if (!managingProfile || !onAddAffiliation) return;
     if (!newHouseNumber.trim()) {
       setAffError('House number is required');
@@ -169,6 +173,7 @@ export function MobileApprovalsScreen({
   };
 
   const handleRemoveAffiliation = async (affId: string, isPrimary: boolean) => {
+    if (isDemoMode) return;
     if (!managingProfile || !onDeleteAffiliation) return;
     setAffLoading(true);
     try {
@@ -188,6 +193,7 @@ export function MobileApprovalsScreen({
   };
 
   const handleSetPrimary = async (aff: any) => {
+    if (isDemoMode) return;
     if (!managingProfile || !onSetPrimaryAffiliation) return;
     setAffLoading(true);
     try {
@@ -215,6 +221,7 @@ export function MobileApprovalsScreen({
 
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isDemoMode) return;
     if (!editingProfile) return;
     setEditLoading(true);
     try {
@@ -226,6 +233,7 @@ export function MobileApprovalsScreen({
   };
 
   const handleConfirmSuspend = async (reason: string) => {
+    if (isDemoMode) return;
     if (!suspendingProfile) return;
     setSuspendLoading(true);
     try {
@@ -404,7 +412,7 @@ export function MobileApprovalsScreen({
                 type="text"
                 disabled
                 className="search-input-mobile"
-                value={editingProfile.full_name || editingProfile.email}
+                value={maskName(editingProfile.full_name || editingProfile.email, isDemoMode)}
                 style={{ opacity: 0.7, marginTop: '4px' }}
               />
             </div>
@@ -533,7 +541,8 @@ export function MobileApprovalsScreen({
               <button
                 type="submit"
                 className="btn-mobile btn-mobile-primary"
-                disabled={editLoading}
+                disabled={editLoading || isDemoMode}
+                title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
               >
                 {editLoading ? 'Saving...' : 'Save Profile'}
               </button>
@@ -548,7 +557,7 @@ export function MobileApprovalsScreen({
         onClose={() => setSuspendingProfile(null)}
         onConfirm={handleConfirmSuspend}
         title="Suspend Resident Access"
-        description={`Are you sure you want to suspend access for ${suspendingProfile?.full_name || suspendingProfile?.email}? They will no longer be able to log in.`}
+        description={`Are you sure you want to suspend access for ${maskName(suspendingProfile?.full_name || suspendingProfile?.email, isDemoMode)}? They will no longer be able to log in.`}
         confirmText="Suspend Resident"
         requireReason
         isDanger
@@ -617,7 +626,8 @@ export function MobileApprovalsScreen({
                           <button
                             type="button"
                             onClick={() => handleSetPrimary(aff)}
-                            disabled={affLoading}
+                            disabled={affLoading || isDemoMode}
+                            title={isDemoMode ? 'Actions are disabled in Demo Mode' : 'Set as primary'}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -625,7 +635,6 @@ export function MobileApprovalsScreen({
                               color: 'var(--primary)',
                               padding: '4px',
                             }}
-                            title="Set as primary"
                           >
                             <Star size={14} />
                           </button>
@@ -634,7 +643,8 @@ export function MobileApprovalsScreen({
                           <button
                             type="button"
                             onClick={() => handleRemoveAffiliation(aff.id, aff.is_primary)}
-                            disabled={affLoading}
+                            disabled={affLoading || isDemoMode}
+                            title={isDemoMode ? 'Actions are disabled in Demo Mode' : 'Remove affiliation'}
                             style={{
                               background: 'none',
                               border: 'none',
@@ -642,7 +652,6 @@ export function MobileApprovalsScreen({
                               color: 'var(--danger)',
                               padding: '4px',
                             }}
-                            title="Remove affiliation"
                           >
                             <Trash2 size={14} />
                           </button>
@@ -762,7 +771,8 @@ export function MobileApprovalsScreen({
                     type="button"
                     className="btn-mobile btn-mobile-primary"
                     onClick={handleAddNewAffiliation}
-                    disabled={affLoading}
+                    disabled={affLoading || isDemoMode}
+                    title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                     style={{ marginTop: '4px' }}
                   >
                     {affLoading ? 'Adding...' : 'Add Affiliation'}

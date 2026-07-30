@@ -188,7 +188,8 @@ export function MobileAppRbacScreen({
 
                       <select
                         className="search-input-mobile"
-                        disabled={!canManage || isUpdating}
+                        disabled={!canManage || isUpdating || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                         value={currentAssignment ? currentAssignment.app_role_id : 'no_access'}
                         onChange={(e) => handleRoleChange(app.id, currentAssignment, e.target.value)}
                         style={{

@@ -145,6 +145,8 @@ export function UserCard({
             <button
               type="button"
               className="btn-mobile btn-mobile-primary"
+              disabled={isDemoMode}
+              title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
               onClick={(e) => {
                 e.stopPropagation();
                 triggerHapticFeedback(12);
@@ -160,6 +162,8 @@ export function UserCard({
             <button
               type="button"
               className="btn-mobile"
+              disabled={isDemoMode}
+              title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
               onClick={(e) => {
                 e.stopPropagation();
                 triggerHapticFeedback(8);
@@ -175,6 +179,8 @@ export function UserCard({
             <button
               type="button"
               className="btn-mobile"
+              disabled={isDemoMode}
+              title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
               onClick={(e) => {
                 e.stopPropagation();
                 triggerHapticFeedback(8);
@@ -190,6 +196,8 @@ export function UserCard({
             <button
               type="button"
               className="btn-mobile btn-mobile-danger"
+              disabled={isDemoMode}
+              title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
               onClick={(e) => {
                 e.stopPropagation();
                 triggerHapticFeedback(15);

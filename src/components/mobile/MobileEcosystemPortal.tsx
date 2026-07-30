@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useDemoMode } from '../../hooks/useDemoMode';
 import { BottomTabBar } from './BottomTabBar';
 import type { MobileTab } from './BottomTabBar';
 import { MobileHubScreen } from './MobileHubScreen';
@@ -14,6 +15,7 @@ import * as analytics from '../../lib/analytics';
 export function MobileEcosystemPortal() {
   const { user } = useAuth();
   const { isAdmin, isVerifier, isGovernanceManager } = usePermissions();
+  const { isDemoMode } = useDemoMode();
 
   // Tab State & URL Sync
   const [activeTab, setActiveTab] = useState<MobileTab>(() => {
@@ -294,6 +296,7 @@ export function MobileEcosystemPortal() {
 
   // Handlers for Approvals
   const handleApproveProfile = async (profile: any) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase
         .from('profiles')
@@ -309,6 +312,7 @@ export function MobileEcosystemPortal() {
   };
 
   const handleSuspendProfile = async (profile: any, reason: string) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase
         .from('profiles')
@@ -324,6 +328,7 @@ export function MobileEcosystemPortal() {
   };
 
   const handleUpdateProfile = async (profileId: string, updateData: any) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase.from('profiles').update(updateData).eq('id', profileId);
       if (error) throw error;
@@ -341,6 +346,7 @@ export function MobileEcosystemPortal() {
     isPrimary: boolean,
     participantType: string
   ) => {
+    if (isDemoMode) return;
     const { data: houseData } = await supabase
       .from('houses')
       .select('id')
@@ -381,6 +387,7 @@ export function MobileEcosystemPortal() {
   };
 
   const handleDeleteAffiliation = async (profileId: string, affId: string, isPrimary: boolean, remainingAffs: any[]) => {
+    if (isDemoMode) return;
     const { error } = await supabase
       .from('profile_house_affiliations')
       .delete()
@@ -415,6 +422,7 @@ export function MobileEcosystemPortal() {
   };
 
   const handleSetPrimaryAffiliation = async (profileId: string, aff: any) => {
+    if (isDemoMode) return;
     await supabase
       .from('profile_house_affiliations')
       .update({ is_primary: false })
@@ -441,6 +449,7 @@ export function MobileEcosystemPortal() {
 
   // Handlers for Roles
   const handlePromoteRole = async (userId: string, targetRole: 'resident_verifier' | 'platform_moderator', email: string) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase.from('user_roles').insert({ user_id: userId, role: targetRole });
       if (error) throw error;
@@ -457,6 +466,7 @@ export function MobileEcosystemPortal() {
     email: string,
     reason: string
   ) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase
         .from('user_roles')
@@ -474,6 +484,7 @@ export function MobileEcosystemPortal() {
 
   // Handlers for App RBAC
   const handleAssignAppRole = async (userId: string, appRoleId: string) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase.from('user_app_roles').insert({
         user_id: userId,
@@ -491,6 +502,7 @@ export function MobileEcosystemPortal() {
   };
 
   const handleRemoveAppRole = async (userAppRoleId: string, _appRoleId: string, appName: string) => {
+    if (isDemoMode) return;
     try {
       const { error } = await supabase.from('user_app_roles').delete().eq('id', userAppRoleId);
       if (error) throw error;

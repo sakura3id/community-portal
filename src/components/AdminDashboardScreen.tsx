@@ -620,6 +620,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
   };
 
   const handleAddAffiliation = async () => {
+    if (isDemoMode) return;
     if (!newAffiliation.house_number) {
       setAffiliationsError('House number is required');
       return;
@@ -692,6 +693,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
   };
 
   const handleDeleteAffiliation = async (affId: string, isPrimary: boolean) => {
+    if (isDemoMode) return;
     setLoading(true);
     try {
       const { error } = await supabase
@@ -749,6 +751,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
   };
 
   const handleSetPrimaryAffiliation = async (aff: HouseAffiliation) => {
+    if (isDemoMode) return;
     setLoading(true);
     try {
       await supabase
@@ -810,6 +813,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
   };
 
   const handleSaveProfileEdit = async (profile: Profile) => {
+    if (isDemoMode) return;
     const normHouse = editForm.house_number ? normalizeHouseNumber(editForm.house_number) : '';
     const normWhatsApp = editForm.whatsapp_number ? normalizeWhatsAppNumber(editForm.whatsapp_number) : '';
     const affiliation = editForm.participant_type === 'non_resident' ? editForm.requested_affiliation.trim() : '';
@@ -952,6 +956,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
 
   // Handle Approve Resident (Global standing)
   const handleApproveResident = async (profile: Profile) => {
+    if (isDemoMode) return;
     setLoading(true);
     try {
       const { error } = await supabase
@@ -1002,6 +1007,7 @@ export function AdminDashboardScreen({ onBack }: AdminDashboardScreenProps) {
 
   // Execute Negative Action (Reject / Suspend) with required reason
   const executeNegativeAction = async () => {
+    if (isDemoMode) return;
     if (!actionReason.trim()) {
       showToastBanner('A reason is strictly required for this operational action', 'error');
       return;

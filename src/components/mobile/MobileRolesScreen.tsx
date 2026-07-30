@@ -159,7 +159,8 @@ export function MobileRolesScreen({
                       <button
                         type="button"
                         className="btn-mobile btn-mobile-danger"
-                        disabled={actionLoading}
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                         onClick={() => {
                           triggerHapticFeedback(12);
                           setDemoteTarget({
@@ -177,7 +178,8 @@ export function MobileRolesScreen({
                       <button
                         type="button"
                         className="btn-mobile btn-mobile-primary"
-                        disabled={actionLoading}
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                         onClick={() => {
                           triggerHapticFeedback(12);
                           onPromoteRole(profile.id, 'resident_verifier', profile.email);
@@ -192,7 +194,8 @@ export function MobileRolesScreen({
                       <button
                         type="button"
                         className="btn-mobile btn-mobile-danger"
-                        disabled={actionLoading}
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                         onClick={() => {
                           triggerHapticFeedback(12);
                           setDemoteTarget({
@@ -210,7 +213,8 @@ export function MobileRolesScreen({
                       <button
                         type="button"
                         className="btn-mobile"
-                        disabled={actionLoading}
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
                         onClick={() => {
                           triggerHapticFeedback(12);
                           onPromoteRole(profile.id, 'platform_moderator', profile.email);
