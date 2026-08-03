@@ -12,6 +12,8 @@ export function LoginScreen() {
   const [demoPassword, setDemoPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  const isProduction = import.meta.env.VITE_APP_ENV === 'production' || window.location.hostname.endsWith('sakura3.id');
+
   const handleLogin = async () => {
     try {
       setLoading(true);
@@ -97,52 +99,56 @@ export function LoginScreen() {
             )}
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0', color: 'var(--text-muted)', fontSize: '12px', opacity: 0.8 }}>
-            <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }}></div>
-            <span style={{ padding: '0 12px', fontWeight: 600, letterSpacing: '0.05em' }}>OR</span>
-            <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }}></div>
-          </div>
-
-          {showDemoPassword ? (
-            <form onSubmit={handleDemoLogin} className="portal-form" style={{ marginTop: '8px', gap: '12px' }}>
-              <div className="form-group">
-                <input
-                  type="password"
-                  placeholder="Enter Demo Password"
-                  value={demoPassword}
-                  onChange={(e) => setDemoPassword(e.target.value)}
-                  disabled={demoLoading}
-                  autoFocus
-                  style={{ width: '100%' }}
-                />
+          {!isProduction && (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', margin: '4px 0', color: 'var(--text-muted)', fontSize: '12px', opacity: 0.8 }}>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }}></div>
+                <span style={{ padding: '0 12px', fontWeight: 600, letterSpacing: '0.05em' }}>OR</span>
+                <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border-color)' }}></div>
               </div>
-              <button
-                type="submit"
-                disabled={loading || demoLoading}
-                className="submit-button"
-              >
-                {demoLoading ? (
-                  <span className="spinner"></span>
-                ) : (
-                  <>
-                    <span>Submit Password</span>
-                    <ArrowRight className="btn-arrow" />
-                  </>
-                )}
-              </button>
-            </form>
-          ) : (
-            <button
-              onClick={() => handleDemoLogin()}
-              disabled={loading || demoLoading}
-              className="sso-button"
-              type="button"
-              style={{ borderColor: 'var(--primary-glow)', backgroundColor: 'var(--bg-secondary)' }}
-            >
-              <KeyRound className="google-icon" style={{ color: 'var(--primary)', width: '18px', height: '18px' }} />
-              <span>{t('login.continue_as_demo')}</span>
-              <ArrowRight className="btn-arrow" />
-            </button>
+
+              {showDemoPassword ? (
+                <form onSubmit={handleDemoLogin} className="portal-form" style={{ marginTop: '8px', gap: '12px' }}>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      placeholder="Enter Demo Password"
+                      value={demoPassword}
+                      onChange={(e) => setDemoPassword(e.target.value)}
+                      disabled={demoLoading}
+                      autoFocus
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading || demoLoading}
+                    className="submit-button"
+                  >
+                    {demoLoading ? (
+                      <span className="spinner"></span>
+                    ) : (
+                      <>
+                        <span>Submit Password</span>
+                        <ArrowRight className="btn-arrow" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              ) : (
+                <button
+                  onClick={() => handleDemoLogin()}
+                  disabled={loading || demoLoading}
+                  className="sso-button"
+                  type="button"
+                  style={{ borderColor: 'var(--primary-glow)', backgroundColor: 'var(--bg-secondary)' }}
+                >
+                  <KeyRound className="google-icon" style={{ color: 'var(--primary)', width: '18px', height: '18px' }} />
+                  <span>{t('login.continue_as_demo')}</span>
+                  <ArrowRight className="btn-arrow" />
+                </button>
+              )}
+            </>
           )}
         </div>
 
