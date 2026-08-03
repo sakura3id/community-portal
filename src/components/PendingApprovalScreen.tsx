@@ -10,6 +10,7 @@ import { useDemoMode } from '../hooks/useDemoMode';
 import { maskName, maskPhone } from '../lib/masking';
 import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../lib/phone';
 import { COUNTRIES } from '../constants/countries';
+import { buildInfo } from '../generated/build-info';
 
 const getSubtypeLabel = (value: string): string => {
   const key = `house_relationships.${value}.label`;
@@ -239,7 +240,8 @@ export function PendingApprovalScreen() {
         </div>
       )}
 
-      <div className="auth-card glassmorphic">
+      <div style={{ width: '100%', maxWidth: '480px', display: 'flex', flexDirection: 'column' }} className="animate-fade-in">
+        <div className="auth-card glassmorphic">
         <div className="status-header animate-fade-in">
           {savedParticipantType ? (
             <div className="status-badge pending">
@@ -658,6 +660,31 @@ export function PendingApprovalScreen() {
           </button>
         </div>
       </div>
+
+      {/* Build Footer */}
+      <footer
+        style={{
+          marginTop: '32px',
+          paddingTop: '16px',
+          borderTop: '1px solid var(--border-color)',
+          textAlign: 'center',
+          fontSize: '11px',
+          color: 'var(--text-muted)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+        }}
+      >
+        <div>
+          <span>{buildInfo.appName}</span> • <span>{buildInfo.version}</span>
+        </div>
+        {buildInfo.gitCommitSha && buildInfo.gitCommitSha !== 'unknown' && (
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', opacity: 0.8 }}>
+            Commit: {buildInfo.gitCommitSha.substring(0, 7)}
+          </div>
+        )}
+      </footer>
     </div>
-  );
+  </div>
+);
 }
