@@ -343,6 +343,13 @@ export function MobileEcosystemPortal() {
         .eq('id', profile.id);
 
       if (error) throw error;
+
+      // Revoke all assigned app roles on suspension
+      await supabase
+        .from('user_app_roles')
+        .delete()
+        .eq('user_id', profile.id);
+
       await logGovernanceAction(profile.id, 'PROFILE_SUSPENDED', reason, profile.email);
       fetchData();
     } catch (err) {
@@ -353,8 +360,66 @@ export function MobileEcosystemPortal() {
   const handleUpdateProfile = async (profileId: string, updateData: any) => {
     if (isDemoMode) return;
     try {
+      // 1. Fetch current profile with affiliations
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*, profile_house_affiliations(*, houses(house_number))')
+        .eq('id', profileId)
+        .maybeSingle();
+
+      if (!profile) throw new Error('Profile not found');
+
+      // 2. Perform the profile update
       const { error } = await supabase.from('profiles').update(updateData).eq('id', profileId);
       if (error) throw error;
+
+      // 3. If approved, sync the primary house affiliation
+      if (profile.approval_status === 'approved') {
+        const normHouse = updateData.house_number ? updateData.house_number.trim().toUpperCase() : '';
+        if (normHouse) {
+          const { data: houseData } = await supabase
+            .from('houses')
+            .select('id')
+            .eq('house_number', normHouse)
+            .maybeSingle();
+
+          if (houseData) {
+            const existingPrimary = profile.profile_house_affiliations?.find((a: any) => a.is_primary);
+            const affiliationType = updateData.participant_type === 'resident'
+              ? (updateData.resident_subtype || 'owner')
+              : 'caretaker';
+
+            if (existingPrimary) {
+              await supabase
+                .from('profile_house_affiliations')
+                .update({
+                  house_id: houseData.id,
+                  affiliation_type: affiliationType,
+                })
+                .eq('id', existingPrimary.id);
+            } else {
+              await supabase
+                .from('profile_house_affiliations')
+                .insert({
+                  profile_id: profileId,
+                  house_id: houseData.id,
+                  affiliation_type: affiliationType,
+                  is_primary: true,
+                });
+            }
+          }
+        } else {
+          // If house number is cleared, remove the primary affiliation
+          const existingPrimary = profile.profile_house_affiliations?.find((a: any) => a.is_primary);
+          if (existingPrimary) {
+            await supabase
+              .from('profile_house_affiliations')
+              .delete()
+              .eq('id', existingPrimary.id);
+          }
+        }
+      }
+
       fetchData();
     } catch (err) {
       console.error('Update profile failed:', err);
