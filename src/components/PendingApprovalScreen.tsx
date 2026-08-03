@@ -9,6 +9,7 @@ import * as analytics from '../lib/analytics';
 import { useDemoMode } from '../hooks/useDemoMode';
 import { maskName, maskPhone } from '../lib/masking';
 import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../lib/phone';
+import { COUNTRIES } from '../constants/countries';
 
 const getSubtypeLabel = (value: string): string => {
   const key = `house_relationships.${value}.label`;
@@ -595,12 +596,11 @@ export function PendingApprovalScreen() {
                       cursor: 'pointer'
                     }}
                   >
-                    <option value="+62">🇮🇩 +62</option>
-                    <option value="+65">🇸🇬 +65</option>
-                    <option value="+60">🇲🇾 +60</option>
-                    <option value="+1">🇺🇸 +1</option>
-                    <option value="+44">🇬🇧 +44</option>
-                    <option value="+61">🇦🇺 +61</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={`${c.code}-${c.dialCode}`} value={c.dialCode}>
+                        {c.flag} {c.dialCode} ({c.name})
+                      </option>
+                    ))}
                   </select>
                   <input
                     id="whatsappNumber"

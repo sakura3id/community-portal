@@ -15,6 +15,7 @@ import { triggerHapticFeedback } from './BottomTabBar';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { maskName } from '../../lib/masking';
 import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../../lib/phone';
+import { COUNTRIES } from '../../constants/countries';
 
 interface MobileApprovalsScreenProps {
   profiles: UserProfileItem[];
@@ -557,12 +558,11 @@ export function MobileApprovalsScreen({
                     cursor: 'pointer'
                   }}
                 >
-                  <option value="+62">🇮🇩 +62</option>
-                  <option value="+65">🇸🇬 +65</option>
-                  <option value="+60">🇲🇾 +60</option>
-                  <option value="+1">🇺🇸 +1</option>
-                  <option value="+44">🇬🇧 +44</option>
-                  <option value="+61">🇦🇺 +61</option>
+                  {COUNTRIES.map((c) => (
+                    <option key={`${c.code}-${c.dialCode}`} value={c.dialCode}>
+                      {c.flag} {c.dialCode} ({c.name})
+                    </option>
+                  ))}
                 </select>
                 <input
                   type="text"
