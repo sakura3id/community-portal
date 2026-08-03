@@ -36,7 +36,8 @@
       "house_number_max_length": "House number must be 25 characters or less",
       "subtype_required": "Resident subtype is required",
       "affiliation_required": "Affiliation selection is required",
-      "whatsapp_max_length": "WhatsApp number must be 25 characters or less"
+      "whatsapp_max_length": "WhatsApp number must be 25 characters or less",
+      "whatsapp_invalid": "WhatsApp number is invalid (must contain 9 to 15 digits)"
     }
   },
   "house_relationships": {

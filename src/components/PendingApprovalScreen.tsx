@@ -8,6 +8,7 @@ import * as analytics from '../lib/analytics';
 
 import { useDemoMode } from '../hooks/useDemoMode';
 import { maskName, maskPhone } from '../lib/masking';
+import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../lib/phone';
 
 const getSubtypeLabel = (value: string): string => {
   const key = `house_relationships.${value}.label`;
@@ -21,7 +22,8 @@ export function PendingApprovalScreen() {
   const [participantType, setParticipantType] = useState<'resident' | 'non_resident'>('resident');
   const [residentSubtype, setResidentSubtype] = useState<'owner' | 'renter' | 'household_member' | 'caretaker'>('owner');
   const [houseNumber, setHouseNumber] = useState('');
-  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [phoneCountryCode, setPhoneCountryCode] = useState('+62');
+  const [phoneBody, setPhoneBody] = useState('');
   const [requestedAffiliation, setRequestedAffiliation] = useState('');
   const [houseOptions, setHouseOptions] = useState<string[]>([]);
   const [houseSearch, setHouseSearch] = useState('');
@@ -80,7 +82,9 @@ export function PendingApprovalScreen() {
             setHouseSearch(data.house_number);
           }
           if (data.whatsapp_number) {
-            setWhatsappNumber(data.whatsapp_number);
+            const parsed = parseWhatsAppNumber(data.whatsapp_number);
+            setPhoneCountryCode(parsed.countryCode);
+            setPhoneBody(parsed.body);
           }
           if (data.requested_affiliation) {
             setRequestedAffiliation(data.requested_affiliation);
@@ -138,9 +142,17 @@ export function PendingApprovalScreen() {
       }
     }
 
-    if (whatsappNumber && whatsappNumber.length > 25) {
-      showToast(t('waiting_room.validation.whatsapp_max_length'), 'error');
-      return;
+    const fullNormalized = phoneBody.trim() ? normalizeWhatsAppNumber(phoneCountryCode + phoneBody) : '';
+
+    if (phoneBody.trim()) {
+      if (!validateWhatsAppNumber(fullNormalized)) {
+        showToast(t('waiting_room.validation.whatsapp_invalid'), 'error');
+        return;
+      }
+      if (fullNormalized.length > 25) {
+        showToast(t('waiting_room.validation.whatsapp_max_length'), 'error');
+        return;
+      }
     }
 
     setLoading(true);
@@ -158,7 +170,7 @@ export function PendingApprovalScreen() {
             : (houseNumber ? 'caretaker' : null),
           house_number: houseNumber ? houseNumber.trim() : null,
           requested_affiliation: participantType === 'non_resident' ? finalAffiliation : null,
-          whatsapp_number: whatsappNumber.trim() || null,
+          whatsapp_number: fullNormalized || null,
           approval_status: 'pending', // Explicitly mark status as pending on submission
         })
         .eq('id', user?.id);
@@ -167,14 +179,14 @@ export function PendingApprovalScreen() {
 
       analytics.track('profile_completed', {
         has_house_number: !!houseNumber,
-        has_whatsapp_number: !!whatsappNumber
+        has_whatsapp_number: !!fullNormalized
       });
 
       setSavedParticipantType(participantType);
       setSavedResidentSubtype(participantType === 'resident' ? residentSubtype : null);
       setSavedHouseNumber(houseNumber ? houseNumber.trim() : null);
       setSavedRequestedAffiliation(participantType === 'non_resident' ? finalAffiliation : null);
-      setSavedWhatsappNumber(whatsappNumber.trim() || null);
+      setSavedWhatsappNumber(fullNormalized || null);
 
       // 2. Trigger edge function notification if it's the first submission
       if (isFirstSubmission) {
@@ -565,15 +577,45 @@ export function PendingApprovalScreen() {
                   <Phone className="input-label-icon" />
                   <span>{t('waiting_room.whatsapp_number_label')}</span>
                 </label>
-                <input
-                  id="whatsappNumber"
-                  type="tel"
-                  placeholder="e.g., 08123456789"
-                  value={whatsappNumber}
-                  onChange={(e) => setWhatsappNumber(e.target.value)}
-                  maxLength={25}
-                  disabled={loading}
-                />
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                  <select
+                    value={phoneCountryCode}
+                    onChange={(e) => setPhoneCountryCode(e.target.value)}
+                    disabled={loading}
+                    style={{
+                      width: '95px',
+                      padding: '12px',
+                      borderRadius: '12px',
+                      border: '1px solid var(--border-color)',
+                      backgroundColor: 'var(--bg-secondary)',
+                      color: 'var(--text-primary)',
+                      fontSize: '14px',
+                      fontFamily: 'var(--font-sans)',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="+62">🇮🇩 +62</option>
+                    <option value="+65">🇸🇬 +65</option>
+                    <option value="+60">🇲🇾 +60</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+61">🇦🇺 +61</option>
+                  </select>
+                  <input
+                    id="whatsappNumber"
+                    type="tel"
+                    placeholder="8123456789"
+                    value={phoneBody}
+                    onChange={(e) => setPhoneBody(e.target.value)}
+                    maxLength={20}
+                    disabled={loading}
+                    style={{
+                      flex: 1,
+                      margin: 0
+                    }}
+                  />
+                </div>
               </div>
 
               <button
