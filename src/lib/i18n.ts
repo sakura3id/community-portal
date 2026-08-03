@@ -2,7 +2,7 @@ import id from '../locales/id.json';
 import en from '../locales/en.json';
 
 const translations: Record<string, unknown> = { id, en };
-let currentLocale = 'en';
+let currentLocale = 'id';
 
 export function setLocale(locale: string) {
   if (translations[locale]) {
