@@ -14,6 +14,8 @@ import { EmptyState } from './EmptyState';
 import { triggerHapticFeedback } from './BottomTabBar';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { maskName } from '../../lib/masking';
+import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../../lib/phone';
+import { COUNTRIES } from '../../constants/countries';
 
 interface MobileApprovalsScreenProps {
   profiles: UserProfileItem[];
@@ -95,6 +97,8 @@ export function MobileApprovalsScreen({
     resident_subtype: 'owner',
     requested_affiliation: '',
   });
+  const [editPhoneCountryCode, setEditPhoneCountryCode] = useState('+62');
+  const [editPhoneBody, setEditPhoneBody] = useState('');
   const [editLoading, setEditLoading] = useState(false);
 
   // Suspend Modal State
@@ -208,6 +212,9 @@ export function MobileApprovalsScreen({
 
   const handleStartEdit = (p: UserProfileItem) => {
     setEditingProfile(p);
+    const parsed = parseWhatsAppNumber(p.whatsapp_number);
+    setEditPhoneCountryCode(parsed.countryCode);
+    setEditPhoneBody(parsed.body);
     setEditForm({
       house_number: p.house_number || '',
       whatsapp_number: p.whatsapp_number || '',
@@ -223,9 +230,25 @@ export function MobileApprovalsScreen({
     e.preventDefault();
     if (isDemoMode) return;
     if (!editingProfile) return;
+
+    const fullNormalized = editPhoneBody.trim() ? normalizeWhatsAppNumber(editPhoneCountryCode + editPhoneBody) : '';
+    if (editPhoneBody.trim()) {
+      if (!validateWhatsAppNumber(fullNormalized)) {
+        alert('WhatsApp number is invalid (must contain 9 to 15 digits)');
+        return;
+      }
+      if (fullNormalized.length > 25) {
+        alert('WhatsApp number is too long (maximum 25 characters)');
+        return;
+      }
+    }
+
     setEditLoading(true);
     try {
-      await onUpdateProfile(editingProfile.id, editForm);
+      await onUpdateProfile(editingProfile.id, {
+        ...editForm,
+        whatsapp_number: fullNormalized || null,
+      });
       setEditingProfile(null);
     } finally {
       setEditLoading(false);
@@ -519,14 +542,37 @@ export function MobileApprovalsScreen({
               <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
                 WhatsApp Number
               </label>
-              <input
-                type="text"
-                className="search-input-mobile"
-                value={editForm.whatsapp_number}
-                onChange={(e) => setEditForm({ ...editForm, whatsapp_number: e.target.value })}
-                placeholder="e.g. 08123456789"
-                style={{ marginTop: '4px' }}
-              />
+              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                <select
+                  value={editPhoneCountryCode}
+                  onChange={(e) => setEditPhoneCountryCode(e.target.value)}
+                  style={{
+                    width: '95px',
+                    padding: '8px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    backgroundColor: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    fontSize: '13px',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {COUNTRIES.map((c) => (
+                    <option key={`${c.code}-${c.dialCode}`} value={c.dialCode}>
+                      {c.flag} {c.dialCode} ({c.name})
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  className="search-input-mobile"
+                  value={editPhoneBody}
+                  onChange={(e) => setEditPhoneBody(e.target.value)}
+                  placeholder="8123456789"
+                  style={{ flex: 1, marginTop: 0 }}
+                />
+              </div>
             </div>
 
             <div className="btn-row-mobile" style={{ marginTop: '10px' }}>
