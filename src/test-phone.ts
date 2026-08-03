@@ -1,5 +1,5 @@
 import { COUNTRIES } from './constants/countries';
-import { parseWhatsAppNumber, normalizeWhatsAppNumber } from './lib/phone';
+import { parseWhatsAppNumber } from './lib/phone';
 
 // 1. Find all intersecting dial codes
 console.log('--- Finding Intersecting Country Dial Codes ---');
@@ -54,5 +54,5 @@ for (const tc of testCases) {
 
 console.log(`\nTest results: ${passed}/${testCases.length} passed.`);
 if (passed !== testCases.length) {
-  process.exit(1);
+  throw new Error('Some phone number parser unit tests failed.');
 }
