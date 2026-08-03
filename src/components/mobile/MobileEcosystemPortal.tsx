@@ -304,6 +304,29 @@ export function MobileEcosystemPortal() {
         .eq('id', profile.id);
 
       if (error) throw error;
+
+      if (profile.house_number && profile.resident_subtype) {
+        const { data: houseData } = await supabase
+          .from('houses')
+          .select('id')
+          .eq('house_number', profile.house_number)
+          .maybeSingle();
+
+        if (houseData) {
+          const { error: affilError } = await supabase
+            .from('profile_house_affiliations')
+            .insert({
+              profile_id: profile.id,
+              house_id: houseData.id,
+              affiliation_type: profile.resident_subtype,
+              is_primary: true,
+            });
+          if (affilError) {
+            console.error('Failed to create onboarding house affiliation:', affilError);
+          }
+        }
+      }
+
       await logGovernanceAction(profile.id, 'APPROVAL_GRANTED', 'Approved via mobile portal', profile.email);
       fetchData();
     } catch (err) {
