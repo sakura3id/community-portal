@@ -37,7 +37,8 @@
       "subtype_required": "Status di rumah wajib diisi",
       "affiliation_required": "Pilihan peran wajib diisi",
       "whatsapp_max_length": "Nomor WhatsApp maksimal 25 karakter",
-      "whatsapp_invalid": "Nomor WhatsApp tidak valid (harus terdiri dari 9 hingga 15 digit)"
+      "whatsapp_invalid": "Nomor WhatsApp tidak valid (harus terdiri dari 9 hingga 15 digit)",
+      "whatsapp_required": "Nomor WhatsApp wajib diisi"
     }
   },
   "house_relationships": {

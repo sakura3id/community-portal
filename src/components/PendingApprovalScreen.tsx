@@ -136,6 +136,10 @@ export function PendingApprovalScreen() {
         showToast(t('waiting_room.validation.subtype_required'), 'error');
         return;
       }
+      if (!phoneBody.trim()) {
+        showToast(t('waiting_room.validation.whatsapp_required'), 'error');
+        return;
+      }
     } else {
       if (!requestedAffiliation) {
         showToast(t('waiting_room.validation.affiliation_required'), 'error');
@@ -576,7 +580,16 @@ export function PendingApprovalScreen() {
               <div className="form-group" style={{ marginTop: '4px' }}>
                 <label htmlFor="whatsappNumber">
                   <Phone className="input-label-icon" />
-                  <span>{t('waiting_room.whatsapp_number_label')}</span>
+                  <span>
+                    {participantType === 'resident' ? (
+                      <>
+                        {t('waiting_room.whatsapp_number_label').replace(/\s*\([^)]+\)/g, '')}{' '}
+                        <span className="required-star">*</span>
+                      </>
+                    ) : (
+                      t('waiting_room.whatsapp_number_label')
+                    )}
+                  </span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                   <select
@@ -610,6 +623,7 @@ export function PendingApprovalScreen() {
                     onChange={(e) => setPhoneBody(e.target.value)}
                     maxLength={20}
                     disabled={loading}
+                    required={participantType === 'resident'}
                     style={{
                       flex: 1,
                       margin: 0
