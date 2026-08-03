@@ -1,3 +1,5 @@
+import { COUNTRIES } from '../constants/countries';
+
 /**
  * Normalizes a WhatsApp/phone number input to a standard format with country code.
  * Defaults to +62 if no country code is present.
@@ -60,11 +62,19 @@ export function parseWhatsAppNumber(fullNumber: string | null | undefined): { co
     return { countryCode: '+62', body: cleaned };
   }
 
-  if (cleaned.startsWith('+62')) {
-    return { countryCode: '+62', body: cleaned.substring(3) };
+  // Check against our comprehensive list of country codes (sorted descending by length of dialCode)
+  const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
+  for (const country of sortedCountries) {
+    if (cleaned.startsWith(country.dialCode)) {
+      return {
+        countryCode: country.dialCode,
+        body: cleaned.substring(country.dialCode.length)
+      };
+    }
   }
 
-  const match = cleaned.match(/^(\+\d{1,4})(.*)$/);
+  // Fallback to non-greedy extraction if not matched in COUNTRIES
+  const match = cleaned.match(/^(\+\d{1,3})(.*)$/);
   if (match) {
     return { countryCode: match[1], body: match[2] };
   }
