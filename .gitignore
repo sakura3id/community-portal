@@ -33,3 +33,6 @@ supabase/.temp/
 # Generated build files
 src/generated/
 
+# Graphify
+graphify-out/
+
