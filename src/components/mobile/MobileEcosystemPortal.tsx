@@ -557,10 +557,10 @@ export function MobileEcosystemPortal() {
     if (isDemoMode) return;
     try {
       const { error } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId)
-        .eq('role', targetRole);
+         .from('user_roles')
+         .delete()
+         .eq('user_id', userId)
+         .eq('role', targetRole);
 
       if (error) throw error;
       await logGovernanceAction(userId, 'ROLE_DEMOTED', reason || `Demoted from ${targetRole}`, email);
