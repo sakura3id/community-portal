@@ -11,3 +11,6 @@ WHERE app_role_id IN (
 DELETE FROM public.app_roles ar
 USING public.applications app
 WHERE ar.app_id = app.id AND app.slug = 'documents';
+
+-- Drop deprecated permission column from public.document_spaces table
+ALTER TABLE public.document_spaces DROP COLUMN IF EXISTS permission;
