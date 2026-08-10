@@ -536,7 +536,7 @@ export function MobileEcosystemPortal() {
   };
 
   // Handlers for Roles
-  const handlePromoteRole = async (userId: string, targetRole: 'resident_verifier' | 'platform_moderator', email: string) => {
+  const handlePromoteRole = async (userId: string, targetRole: 'resident_verifier' | 'platform_moderator' | 'committee', email: string) => {
     if (isDemoMode) return;
     try {
       const { error } = await supabase.from('user_roles').insert({ user_id: userId, role: targetRole });
@@ -550,7 +550,7 @@ export function MobileEcosystemPortal() {
 
   const handleDemoteRole = async (
     userId: string,
-    targetRole: 'resident_verifier' | 'platform_moderator',
+    targetRole: 'resident_verifier' | 'platform_moderator' | 'committee',
     email: string,
     reason: string
   ) => {
