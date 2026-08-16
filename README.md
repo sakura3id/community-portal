@@ -36,7 +36,9 @@ If you are building a new app that should authenticate using this portal, read t
 
 | Document | Description |
 |---|---|
-| [Auth Integration Guide](./docs/auth-integration-guide.md) | Start here — overview, app registration, quick reference |
+| [Architecture Reference](./docs/ARCHITECTURE.md) | Internal developer reference — DB schema, RBAC, RLS policies, session architecture, app registration |
+| [Lessons Learned](./docs/LESSONS_LEARNED.md) | Operational lessons — cookie truncation, OAuth redirects, race conditions, staging migration gotchas |
+| [Auth Integration Guide](./docs/auth-integration-guide.md) | Start here for integrating a new app — overview, app registration, quick reference |
 | [Sakura 3 Identity Protocol](./docs/sakura3-identity-protocol.md) | Platform-agnostic auth contract (cookie, redirect, approval, RBAC specs) |
 | [React + Vite Implementation](./docs/auth/react-vite.md) | Reference implementation for React/Vite apps |
 | [Node.js + Express Implementation](./docs/auth/node-express.md) | Reference implementation for Express backends |

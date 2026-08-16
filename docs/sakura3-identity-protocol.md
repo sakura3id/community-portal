@@ -62,6 +62,7 @@ All apps **must** use this exact key when reading the session storage. Do not us
 | Environment | Cookie Domain |
 |---|---|
 | Production | `.sakura3.id` |
+| Staging | `.sr3.my.id` |
 | Local development | `.localtest.me` |
 | Bare `localhost` / IP | Set without a domain attribute (browser default) |
 
