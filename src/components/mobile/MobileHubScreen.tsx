@@ -82,8 +82,8 @@ export function MobileHubScreen({
       slug: 'community_docs',
       description: t('landing.apps.community_docs.description'),
       icon: FolderOpen,
-      status: 'planned',
-      badgeText: 'Deactivated',
+      status: 'active',
+      badgeText: 'Live',
       link: communityDocsUrl,
     },
   ];
