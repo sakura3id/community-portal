@@ -100,13 +100,13 @@
     "coming_soon": "Coming Soon",
     "apps": {
       "ipl_finder": {
-        "description": "Search, index, and manage bank e-statements and CSV records. Active document audit trail."
+        "description": "Search transactions from BCA Paguyuban bank statements."
       },
       "rekap_viewer": {
-        "description": "Fly.io cached backend display for Sheets logs, reports, and real-time community summaries."
+        "description": "Check IPL payment recap with search and filters."
       },
       "community_docs": {
-        "description": "Governed, searchable access to official community documents, handbook regulations, and meeting records."
+        "description": "Access community documents from Google Drive."
       },
       "kas_management": {
         "description": "Decentralized cashbook treasury, monthly billing tracking, and balance sheet reporting."
