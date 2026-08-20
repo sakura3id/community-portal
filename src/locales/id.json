@@ -100,13 +100,13 @@
     "coming_soon": "Segera Hadir",
     "apps": {
       "ipl_finder": {
-        "description": "Cari, indeks, dan kelola rekening koran bank serta file CSV. Dilengkapi rekam jejak audit dokumen aktif."
+        "description": "Cari transaksi dari file mutasi rekening BCA Paguyuban."
       },
       "rekap_viewer": {
-        "description": "Tampilan log spreadsheet, laporan keuangan, dan rekapitulasi data warga secara langsung."
+        "description": "Cek rekap pembayaran IPL dengan pencarian dan filter."
       },
       "community_docs": {
-        "description": "Akses aman dan teratur ke dokumen resmi lingkungan, peraturan tata tertib warga, dan risalah rapat."
+        "description": "Akses dokumen lingkungan dari Google Drive."
       },
       "kas_management": {
         "description": "Pembukuan kas mandiri, pelacakan tagihan bulanan warga, dan laporan neraca keuangan."

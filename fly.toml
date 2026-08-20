@@ -12,7 +12,7 @@ primary_region = "sin" # Singapore (closest region to UTC+7)
     # Add staging URLs here:
     VITE_IPL_FINDER_URL = "https://ipl-finder.sr3.my.id"
     VITE_REKAP_VIEWER_URL = "https://rekap.sr3.my.id"
-    VITE_COMMUNITY_DOCS_URL = "https://info.sr3.my.id"
+    VITE_COMMUNITY_DOCS_URL = "https://docs.sr3.my.id"
     VITE_DEMO_USER_EMAIL = "demo@veryresto.com"
     VITE_APP_ENV = "staging"
 

@@ -98,9 +98,11 @@ Once registered, the **Admin Center** on `portal.sakura3.id` can assign app role
 |---|---|
 | Cookie name | `sakura3-auth` |
 | Cookie domain (prod) | `.sakura3.id` |
+| Cookie domain (staging) | `.sr3.my.id` |
 | Cookie domain (local) | `.localtest.me` |
 | Supabase `storageKey` | `sakura3-auth` |
 | Portal URL (prod) | `https://portal.sakura3.id` |
+| Portal URL (staging) | `https://portal.sr3.my.id` |
 | Portal URL (local) | `http://portal.localtest.me:5173` |
 | Permission RPC | `has_namespaced_permission(user_id, 'app_slug.perm_name')` |
 | Approval field | `public.profiles.approval_status` |

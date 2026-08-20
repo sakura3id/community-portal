@@ -18,8 +18,8 @@ interface MobileRolesScreenProps {
   onPageChange: (newPage: number) => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
-  onPromoteRole: (userId: string, targetRole: 'resident_verifier' | 'platform_moderator', email: string) => Promise<void>;
-  onDemoteRole: (userId: string, targetRole: 'resident_verifier' | 'platform_moderator', email: string, reason: string) => Promise<void>;
+  onPromoteRole: (userId: string, targetRole: 'resident_verifier' | 'platform_moderator' | 'committee', email: string) => Promise<void>;
+  onDemoteRole: (userId: string, targetRole: 'resident_verifier' | 'platform_moderator' | 'committee', email: string, reason: string) => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -43,7 +43,7 @@ export function MobileRolesScreen({
   // Demotion Context State
   const [demoteTarget, setDemoteTarget] = useState<{
     userId: string;
-    role: 'resident_verifier' | 'platform_moderator';
+    role: 'resident_verifier' | 'platform_moderator' | 'committee';
     email: string;
     name: string;
   } | null>(null);
@@ -104,6 +104,7 @@ export function MobileRolesScreen({
 
             const isVerifier = isUserRole(profile.id, 'resident_verifier');
             const isModerator = isUserRole(profile.id, 'platform_moderator');
+            const isCommittee = isUserRole(profile.id, 'committee');
 
             return (
               <div key={profile.id} className="card-mobile">
@@ -143,18 +144,19 @@ export function MobileRolesScreen({
                   }}
                 >
                   <span style={{ color: 'var(--text-muted)' }}>Assigned Privileges:</span>
-                  {!isVerifier && !isModerator ? (
+                  {!isVerifier && !isModerator && !isCommittee ? (
                     <Badge label="STANDARD RESIDENT" variant="standard-resident" />
                   ) : (
                     <>
                       {isVerifier && <Badge label="RESIDENT VERIFIER" variant="resident-verifier" />}
                       {isModerator && <Badge label="MODERATOR" variant="secretariat-admin" />}
+                      {isCommittee && <Badge label="COMMITTEE" variant="resident" />}
                     </>
                   )}
                 </div>
 
                 {isAdmin && (
-                  <div className="btn-row-mobile">
+                  <div className="btn-row-mobile" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {isVerifier ? (
                       <button
                         type="button"
@@ -224,6 +226,41 @@ export function MobileRolesScreen({
                         <span>Promote Moderator</span>
                       </button>
                     )}
+
+                    {isCommittee ? (
+                      <button
+                        type="button"
+                        className="btn-mobile btn-mobile-danger"
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
+                        onClick={() => {
+                          triggerHapticFeedback(12);
+                          setDemoteTarget({
+                            userId: profile.id,
+                            role: 'committee',
+                            email: profile.email,
+                            name,
+                          });
+                        }}
+                      >
+                        <ShieldAlert size={14} />
+                        <span>Demote Committee</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn-mobile btn-mobile-primary"
+                        disabled={actionLoading || isDemoMode}
+                        title={isDemoMode ? 'Actions are disabled in Demo Mode' : undefined}
+                        onClick={() => {
+                          triggerHapticFeedback(12);
+                          onPromoteRole(profile.id, 'committee', profile.email);
+                        }}
+                      >
+                        <ArrowUpRight size={14} />
+                        <span>Promote Committee</span>
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -284,7 +321,7 @@ export function MobileRolesScreen({
         isOpen={!!demoteTarget}
         onClose={() => setDemoteTarget(null)}
         onConfirm={handleConfirmDemote}
-        title={`Demote ${demoteTarget?.role === 'resident_verifier' ? 'Verifier' : 'Moderator'}`}
+        title={`Demote ${demoteTarget?.role === 'resident_verifier' ? 'Verifier' : demoteTarget?.role === 'platform_moderator' ? 'Moderator' : 'Committee'}`}
         description={`Are you sure you want to demote ${demoteTarget?.name}? They will lose elevated administrative permissions.`}
         confirmText="Demote Role"
         requireReason
