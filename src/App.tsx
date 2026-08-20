@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { usePermissions } from './hooks/usePermissions';
 import { ThemeProvider } from './hooks/useTheme';
@@ -7,10 +8,22 @@ import { RejectedScreen } from './components/RejectedScreen';
 import { EcosystemLandingScreen } from './components/EcosystemLandingScreen';
 
 import { DemoBanner } from './components/DemoBanner';
+import { setUserProperties, track } from './lib/analytics';
 
 function MainAppContent() {
   const { user, session, loading: authLoading } = useAuth();
   const { isApproved, isRejected, loading: permLoading } = usePermissions();
+
+  useEffect(() => {
+    if (user && !authLoading && !permLoading) {
+      setUserProperties({
+        user_role: isApproved ? 'approved' : (isRejected ? 'rejected' : 'pending'),
+        participant_type: 'authenticated'
+      });
+      track('login_success', { email: user.email });
+    }
+  }, [user, authLoading, permLoading, isApproved, isRejected]);
+
 
   // Show a premium visual spinner if authenticating or fetching permissions
   if (authLoading || permLoading) {
