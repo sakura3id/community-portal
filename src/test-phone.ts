@@ -1,5 +1,5 @@
 import { COUNTRIES } from './constants/countries';
-import { parseWhatsAppNumber } from './lib/phone';
+import { parseWhatsAppNumber, normalizeWhatsAppNumber } from './lib/phone';
 
 // 1. Find all intersecting dial codes
 console.log('--- Finding Intersecting Country Dial Codes ---');
@@ -16,7 +16,7 @@ for (const a of COUNTRIES) {
 console.log(`Found ${intersections.length} intersecting country code pairs:`);
 console.table(intersections.slice(0, 15)); // Show top 15
 
-// 2. Define unit tests for intersecting dial codes
+// 2. Define unit tests for intersecting dial codes & leading zero trimming
 console.log('\n--- Running Unit Tests for Phone Number Parser ---');
 
 const testCases = [
@@ -28,7 +28,6 @@ const testCases = [
   { input: '+6582134444', expectedCountry: '+65', expectedBody: '82134444' },
 
   // Overlap test: Australia (+61) vs Cocos Islands (+61) / Christmas Island (+61)
-  // Note: Since they share exactly the same dialCode '+61', they should both extract '+61'
   { input: '+61412345678', expectedCountry: '+61', expectedBody: '412345678' },
 
   // Overlap test: UK (+44) vs Guernsey (+44) / Jersey (+44) / Isle of Man (+44)
@@ -37,7 +36,11 @@ const testCases = [
   // Test local formatting inputs
   { input: '08123456789', expectedCountry: '+62', expectedBody: '8123456789' },
   { input: '8123456789', expectedCountry: '+62', expectedBody: '8123456789' },
-  { input: '628123456789', expectedCountry: '+62', expectedBody: '8123456789' }
+  { input: '628123456789', expectedCountry: '+62', expectedBody: '8123456789' },
+
+  // Leading zero right after country code
+  { input: '+6208123456789', expectedCountry: '+62', expectedBody: '8123456789' },
+  { input: '+105551234567', expectedCountry: '+1', expectedBody: '5551234567' }
 ];
 
 let passed = 0;
@@ -52,7 +55,29 @@ for (const tc of testCases) {
   }
 }
 
-console.log(`\nTest results: ${passed}/${testCases.length} passed.`);
-if (passed !== testCases.length) {
-  throw new Error('Some phone number parser unit tests failed.');
+// 3. Test normalization directly
+console.log('\n--- Running Unit Tests for Phone Number Normalizer ---');
+const normalizationCases = [
+  { input: '08123456789', expected: '+628123456789' },
+  { input: '+6208123456789', expected: '+628123456789' },
+  { input: '+105551234567', expected: '+15551234567' },
+  { input: '+628123456789', expected: '+628123456789' }
+];
+
+for (const tc of normalizationCases) {
+  const result = normalizeWhatsAppNumber(tc.input);
+  const match = result === tc.expected;
+  if (match) {
+    console.log(`✅ PASSED: "${tc.input}" ➔ Normalized: ${result}`);
+    passed++;
+  } else {
+    console.error(`❌ FAILED: "${tc.input}"\n   Expected: ${tc.expected}\n   Got:      ${result}`);
+  }
 }
+
+const totalTests = testCases.length + normalizationCases.length;
+console.log(`\nTest results: ${passed}/${totalTests} passed.`);
+if (passed !== totalTests) {
+  throw new Error('Some phone number parser or normalizer unit tests failed.');
+}
+
