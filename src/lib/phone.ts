@@ -27,6 +27,15 @@ export function normalizeWhatsAppNumber(input: string, defaultCountryCode = '+62
     cleaned = '+' + cleaned;
   }
 
+  // Check if there is a leading zero immediately following the country code, and strip it
+  const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
+  for (const country of sortedCountries) {
+    if (cleaned.startsWith(country.dialCode + '0')) {
+      cleaned = country.dialCode + cleaned.substring(country.dialCode.length + 1);
+      break;
+    }
+  }
+
   return cleaned;
 }
 
@@ -54,7 +63,8 @@ export function parseWhatsAppNumber(fullNumber: string | null | undefined): { co
 
   if (!cleaned.startsWith('+')) {
     if (cleaned.startsWith('62')) {
-      return { countryCode: '+62', body: cleaned.substring(2) };
+      const body = cleaned.substring(2);
+      return { countryCode: '+62', body: body.startsWith('0') ? body.substring(1) : body };
     }
     if (cleaned.startsWith('0')) {
       return { countryCode: '+62', body: cleaned.substring(1) };
@@ -66,9 +76,10 @@ export function parseWhatsAppNumber(fullNumber: string | null | undefined): { co
   const sortedCountries = [...COUNTRIES].sort((a, b) => b.dialCode.length - a.dialCode.length);
   for (const country of sortedCountries) {
     if (cleaned.startsWith(country.dialCode)) {
+      const body = cleaned.substring(country.dialCode.length);
       return {
         countryCode: country.dialCode,
-        body: cleaned.substring(country.dialCode.length)
+        body: body.startsWith('0') ? body.substring(1) : body
       };
     }
   }
@@ -76,7 +87,8 @@ export function parseWhatsAppNumber(fullNumber: string | null | undefined): { co
   // Fallback to non-greedy extraction if not matched in COUNTRIES
   const match = cleaned.match(/^(\+\d{1,3})(.*)$/);
   if (match) {
-    return { countryCode: match[1], body: match[2] };
+    const body = match[2];
+    return { countryCode: match[1], body: body.startsWith('0') ? body.substring(1) : body };
   }
 
   return { countryCode: '+62', body: cleaned };
