@@ -16,6 +16,8 @@ import { useDemoMode } from '../../hooks/useDemoMode';
 import { maskName } from '../../lib/masking';
 import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../../lib/phone';
 import { COUNTRIES } from '../../constants/countries';
+import { AFFILIATION_OPTIONS, getAffiliationLabel } from '../../constants/affiliations';
+
 
 interface MobileApprovalsScreenProps {
   profiles: UserProfileItem[];
@@ -243,12 +245,21 @@ export function MobileApprovalsScreen({
       }
     }
 
+    const updatePayload = {
+      participant_type: editForm.participant_type,
+      whatsapp_number: fullNormalized || null,
+      house_number: editForm.house_number ? editForm.house_number.trim() : null,
+      resident_subtype: editForm.participant_type === 'resident'
+        ? editForm.resident_subtype
+        : (editForm.house_number ? 'caretaker' : null),
+      requested_affiliation: editForm.participant_type === 'non_resident'
+        ? (editForm.requested_affiliation || null)
+        : null
+    };
+
     setEditLoading(true);
     try {
-      await onUpdateProfile(editingProfile.id, {
-        ...editForm,
-        whatsapp_number: fullNormalized || null,
-      });
+      await onUpdateProfile(editingProfile.id, updatePayload);
       setEditingProfile(null);
     } finally {
       setEditLoading(false);
@@ -534,6 +545,92 @@ export function MobileApprovalsScreen({
                     <option value="household_member">Household Member</option>
                     <option value="caretaker">Caretaker</option>
                   </select>
+                </div>
+              </>
+            )}
+
+            {editForm.participant_type === 'non_resident' && (
+              <>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Affiliation
+                  </label>
+                  <select
+                    className="search-input-mobile"
+                    value={editForm.requested_affiliation}
+                    onChange={(e) => setEditForm({ ...editForm, requested_affiliation: e.target.value })}
+                    style={{ marginTop: '4px' }}
+                    required
+                  >
+                    <option value="">Select affiliation...</option>
+                    {AFFILIATION_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {getAffiliationLabel(opt.value)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Associated House (Optional)
+                  </label>
+                  <div style={{ position: 'relative', marginTop: '4px' }}>
+                    <input
+                      type="text"
+                      className="search-input-mobile"
+                      value={editHouseSearch}
+                      onChange={(e) => {
+                        setEditHouseSearch(e.target.value);
+                        setEditForm({ ...editForm, house_number: '' });
+                        setShowEditHouseDropdown(true);
+                      }}
+                      onFocus={() => setShowEditHouseDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowEditHouseDropdown(false), 200)}
+                      placeholder="Search house number..."
+                    />
+                    {showEditHouseDropdown && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: 0,
+                        right: 0,
+                        maxHeight: '150px',
+                        overflowY: 'auto',
+                        background: 'var(--bg-primary)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        marginTop: '4px',
+                        zIndex: 50,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      }}>
+                        {houseOptions.filter(num => num.toLowerCase().startsWith(editHouseSearch.toLowerCase())).length === 0 ? (
+                          <div style={{ padding: '10px 12px', fontSize: '12px', color: 'var(--text-muted)' }}>No matching houses</div>
+                        ) : (
+                          houseOptions
+                            .filter(num => num.toLowerCase().startsWith(editHouseSearch.toLowerCase()))
+                            .map(num => (
+                              <div
+                                key={num}
+                                onMouseDown={() => {
+                                  setEditForm({ ...editForm, house_number: num });
+                                  setEditHouseSearch(num);
+                                }}
+                                style={{
+                                  padding: '8px 12px',
+                                  fontSize: '13px',
+                                  cursor: 'pointer',
+                                  background: editForm.house_number === num ? 'var(--primary-glow)' : 'transparent',
+                                  fontWeight: editForm.house_number === num ? 600 : 400,
+                                }}
+                              >
+                                {num}
+                              </div>
+                            ))
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </>
             )}
