@@ -52,6 +52,19 @@ export function validateWhatsAppNumber(normalizedInput: string): boolean {
 }
 
 /**
+ * Builds a click-to-chat URL for a structurally valid WhatsApp number.
+ * wa.me expects the international number as digits only (no leading "+").
+ */
+export function getWhatsAppUrl(input: string | null | undefined): string | null {
+  if (!input) return null;
+
+  const normalized = normalizeWhatsAppNumber(input);
+  if (!validateWhatsAppNumber(normalized)) return null;
+
+  return `https://wa.me/${normalized.substring(1)}`;
+}
+
+/**
  * Parses a full WhatsApp number into its country code and body components.
  * Defaults to +62.
  */
@@ -93,4 +106,3 @@ export function parseWhatsAppNumber(fullNumber: string | null | undefined): { co
 
   return { countryCode: '+62', body: cleaned };
 }
-

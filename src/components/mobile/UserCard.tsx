@@ -2,6 +2,7 @@ import { Home, Edit, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Badge } from './Badge';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { maskName, maskEmail, maskPhone } from '../../lib/masking';
+import { getWhatsAppUrl } from '../../lib/phone';
 import { triggerHapticFeedback } from './BottomTabBar';
 
 export interface UserProfileItem {
@@ -42,6 +43,7 @@ export function UserCard({
   const name = maskName(profile.full_name || profile.email, isDemoMode);
   const email = maskEmail(profile.email, isDemoMode);
   const phone = profile.whatsapp_number ? maskPhone(profile.whatsapp_number, isDemoMode) : null;
+  const whatsAppUrl = !isDemoMode ? getWhatsAppUrl(profile.whatsapp_number) : null;
 
   const isPending = profile.approval_status === 'pending';
   const isUnsubmitted = profile.approval_status === 'unsubmitted';
@@ -132,7 +134,20 @@ export function UserCard({
         <div>
           <span>WhatsApp: </span>
           {phone ? (
-            <span style={{ fontFamily: 'var(--font-mono)' }}>📱 {phone}</span>
+            whatsAppUrl ? (
+              <a
+                href={whatsAppUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open WhatsApp chat with ${phone}`}
+                onClick={(event) => event.stopPropagation()}
+                style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary)', textDecoration: 'underline' }}
+              >
+                📱 {phone}
+              </a>
+            ) : (
+              <span style={{ fontFamily: 'var(--font-mono)' }}>📱 {phone}</span>
+            )
           ) : (
             <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>None</span>
           )}

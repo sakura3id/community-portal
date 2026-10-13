@@ -8,7 +8,7 @@ import * as analytics from '../lib/analytics';
 
 import { useDemoMode } from '../hooks/useDemoMode';
 import { maskName, maskPhone } from '../lib/masking';
-import { normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../lib/phone';
+import { getWhatsAppUrl, normalizeWhatsAppNumber, validateWhatsAppNumber, parseWhatsAppNumber } from '../lib/phone';
 import { COUNTRIES } from '../constants/countries';
 import { buildInfo } from '../generated/build-info';
 
@@ -316,7 +316,20 @@ export function PendingApprovalScreen() {
                   <div className="detail-row">
                     <Phone className="row-icon" />
                     <span className="row-label">{t('waiting_room.whatsapp_contact')}:</span>
-                    <span className="row-value">{maskPhone(savedWhatsappNumber, isDemoMode)}</span>
+                    {getWhatsAppUrl(savedWhatsappNumber) && !isDemoMode ? (
+                      <a
+                        className="row-value"
+                        href={getWhatsAppUrl(savedWhatsappNumber)!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open WhatsApp chat with ${savedWhatsappNumber}`}
+                        style={{ color: 'var(--primary)', textDecoration: 'underline' }}
+                      >
+                        {maskPhone(savedWhatsappNumber, false)}
+                      </a>
+                    ) : (
+                      <span className="row-value">{maskPhone(savedWhatsappNumber, isDemoMode)}</span>
+                    )}
                   </div>
                 )}
               </div>

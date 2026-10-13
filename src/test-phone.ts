@@ -1,5 +1,5 @@
 import { COUNTRIES } from './constants/countries';
-import { parseWhatsAppNumber, normalizeWhatsAppNumber } from './lib/phone';
+import { getWhatsAppUrl, parseWhatsAppNumber, normalizeWhatsAppNumber } from './lib/phone';
 
 // 1. Find all intersecting dial codes
 console.log('--- Finding Intersecting Country Dial Codes ---');
@@ -76,8 +76,26 @@ for (const tc of normalizationCases) {
 }
 
 const totalTests = testCases.length + normalizationCases.length;
-console.log(`\nTest results: ${passed}/${totalTests} passed.`);
-if (passed !== totalTests) {
-  throw new Error('Some phone number parser or normalizer unit tests failed.');
+const whatsAppUrlCases = [
+  { input: '08123456789', expected: 'https://wa.me/628123456789' },
+  { input: '+62 812-3456-789', expected: 'https://wa.me/628123456789' },
+  { input: 'not a phone number', expected: null },
+  { input: '', expected: null },
+];
+
+console.log('\n--- Running Unit Tests for WhatsApp URLs ---');
+for (const tc of whatsAppUrlCases) {
+  const result = getWhatsAppUrl(tc.input);
+  if (result === tc.expected) {
+    console.log(`✅ PASSED: "${tc.input}" ➔ URL: ${result}`);
+    passed++;
+  } else {
+    console.error(`❌ FAILED: "${tc.input}"\n   Expected: ${tc.expected}\n   Got:      ${result}`);
+  }
 }
 
+const totalTestsWithUrls = totalTests + whatsAppUrlCases.length;
+console.log(`\nTest results: ${passed}/${totalTestsWithUrls} passed.`);
+if (passed !== totalTestsWithUrls) {
+  throw new Error('Some phone number parser or normalizer unit tests failed.');
+}

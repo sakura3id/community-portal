@@ -7,6 +7,7 @@ import { EmptyState } from './EmptyState';
 import { triggerHapticFeedback } from './BottomTabBar';
 import { useDemoMode } from '../../hooks/useDemoMode';
 import { maskName, maskEmail, maskPhone } from '../../lib/masking';
+import { getWhatsAppUrl } from '../../lib/phone';
 
 interface MobileRolesScreenProps {
   profiles: any[];
@@ -101,6 +102,7 @@ export function MobileRolesScreen({
             const name = maskName(profile.full_name || profile.email, isDemoMode);
             const email = maskEmail(profile.email, isDemoMode);
             const phone = profile.whatsapp_number ? maskPhone(profile.whatsapp_number, isDemoMode) : null;
+            const whatsAppUrl = !isDemoMode ? getWhatsAppUrl(profile.whatsapp_number) : null;
 
             const isVerifier = isUserRole(profile.id, 'resident_verifier');
             const isModerator = isUserRole(profile.id, 'platform_moderator');
@@ -125,7 +127,20 @@ export function MobileRolesScreen({
 
                 {phone && (
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                    WhatsApp: <span style={{ fontFamily: 'var(--font-mono)' }}>📱 {phone}</span>
+                    WhatsApp:{' '}
+                    {whatsAppUrl ? (
+                      <a
+                        href={whatsAppUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open WhatsApp chat with ${phone}`}
+                        style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary)', textDecoration: 'underline' }}
+                      >
+                        📱 {phone}
+                      </a>
+                    ) : (
+                      <span style={{ fontFamily: 'var(--font-mono)' }}>📱 {phone}</span>
+                    )}
                   </div>
                 )}
 
