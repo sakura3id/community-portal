@@ -278,6 +278,55 @@ export function MobileApprovalsScreen({
     }
   };
 
+  const renderPagination = (position: 'top' | 'bottom') => (
+    !loading && totalCount > 0 ? (
+      <nav
+        aria-label={`Resident pagination ${position}`}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          ...(position === 'top'
+            ? { marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid var(--border-color)' }
+            : { marginTop: '16px', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }),
+        }}
+      >
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          Page {page} of {totalPages} ({totalCount} total)
+        </span>
+
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            className="btn-mobile"
+            disabled={page <= 1}
+            onClick={() => {
+              triggerHapticFeedback(8);
+              onPageChange(page - 1);
+            }}
+            style={{ height: '36px', minHeight: '36px', padding: '0 10px' }}
+          >
+            <ChevronLeft size={16} />
+            <span>Prev</span>
+          </button>
+          <button
+            type="button"
+            className="btn-mobile"
+            disabled={page >= totalPages}
+            onClick={() => {
+              triggerHapticFeedback(8);
+              onPageChange(page + 1);
+            }}
+            style={{ height: '36px', minHeight: '36px', padding: '0 10px' }}
+          >
+            <span>Next</span>
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      </nav>
+    ) : null
+  );
+
   return (
     <div>
       <div style={{ marginBottom: '14px' }}>
@@ -309,6 +358,8 @@ export function MobileApprovalsScreen({
         selectedId={filterStatus}
         onSelect={onFilterStatusChange}
       />
+
+      {renderPagination('top')}
 
       {/* User Card Stack / Loading / Empty State */}
       {loading ? (
@@ -343,52 +394,7 @@ export function MobileApprovalsScreen({
         </div>
       )}
 
-      {/* Pagination Footer */}
-      {!loading && totalCount > 0 && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginTop: '16px',
-            paddingTop: '12px',
-            borderTop: '1px solid var(--border-color)',
-          }}
-        >
-          <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            Page {page} of {totalPages} ({totalCount} total)
-          </span>
-
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              type="button"
-              className="btn-mobile"
-              disabled={page <= 1}
-              onClick={() => {
-                triggerHapticFeedback(8);
-                onPageChange(page - 1);
-              }}
-              style={{ height: '36px', minHeight: '36px', padding: '0 10px' }}
-            >
-              <ChevronLeft size={16} />
-              <span>Prev</span>
-            </button>
-            <button
-              type="button"
-              className="btn-mobile"
-              disabled={page >= totalPages}
-              onClick={() => {
-                triggerHapticFeedback(8);
-                onPageChange(page + 1);
-              }}
-              style={{ height: '36px', minHeight: '36px', padding: '0 10px' }}
-            >
-              <span>Next</span>
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+      {renderPagination('bottom')}
 
       {/* Filter Bottom Sheet Drawer */}
       <BottomSheet
