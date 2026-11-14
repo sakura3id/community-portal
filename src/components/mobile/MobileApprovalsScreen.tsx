@@ -19,7 +19,16 @@ import { COUNTRIES } from '../../constants/countries';
 import { AFFILIATION_OPTIONS, getAffiliationLabel } from '../../constants/affiliations';
 
 
+export interface ApprovalCounts {
+  all: number;
+  unsubmitted: number;
+  pending: number;
+  approved: number;
+  suspended: number;
+}
+
 interface MobileApprovalsScreenProps {
+  approvalCounts: ApprovalCounts | null;
   profiles: UserProfileItem[];
   loading: boolean;
   totalCount: number;
@@ -44,6 +53,7 @@ interface MobileApprovalsScreenProps {
 }
 
 export function MobileApprovalsScreen({
+  approvalCounts,
   profiles,
   loading,
   totalCount,
@@ -70,10 +80,11 @@ export function MobileApprovalsScreen({
   const { isDemoMode } = useDemoMode();
 
   const stats: StatItem[] = [
-    { id: 'all', label: 'Total Records', value: totalCount, color: 'var(--primary)' },
-    { id: 'unsubmitted', label: 'Unsubmitted', value: profiles.filter(p => p.approval_status === 'unsubmitted').length, color: 'var(--text-muted)' },
-    { id: 'pending', label: 'Pending Review', value: profiles.filter(p => p.approval_status === 'pending').length, color: 'var(--pending)' },
-    { id: 'approved', label: 'Approved Users', value: profiles.filter(p => p.approval_status === 'approved').length, color: 'var(--success)' },
+    { id: 'all', label: 'Total Records', value: approvalCounts?.all ?? '—', color: 'var(--primary)' },
+    { id: 'unsubmitted', label: 'Unsubmitted', value: approvalCounts?.unsubmitted ?? '—', color: 'var(--text-muted)' },
+    { id: 'pending', label: 'Pending Review', value: approvalCounts?.pending ?? '—', color: 'var(--pending)' },
+    { id: 'approved', label: 'Approved Users', value: approvalCounts?.approved ?? '—', color: 'var(--success)' },
+    { id: 'suspended', label: 'Suspended', value: approvalCounts?.suspended ?? '—', color: 'var(--error)' },
   ];
 
   const statusFilterOptions: FilterOption[] = [

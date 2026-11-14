@@ -7,6 +7,7 @@ import { BottomTabBar } from './BottomTabBar';
 import type { MobileTab } from './BottomTabBar';
 import { MobileHubScreen } from './MobileHubScreen';
 import { MobileApprovalsScreen } from './MobileApprovalsScreen';
+import type { ApprovalCounts } from './MobileApprovalsScreen';
 import { MobileRolesScreen } from './MobileRolesScreen';
 import { MobileAppRbacScreen } from './MobileAppRbacScreen';
 import { MobileLogsScreen } from './MobileLogsScreen';
@@ -55,6 +56,7 @@ export function MobileEcosystemPortal() {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [approvalCounts, setApprovalCounts] = useState<ApprovalCounts | null>(null);
 
   // Pagination & filter states
   const [page, setPage] = useState(1);
@@ -147,6 +149,36 @@ export function MobileEcosystemPortal() {
       console.error('Failed logging governance action:', err);
     }
   };
+
+  // Overview counts deliberately ignore list filters and pagination. Head-only
+  // queries count all matching rows while preserving the caller's RLS access.
+  const fetchApprovalCounts = useCallback(async () => {
+    try {
+      const statuses = ['all', 'unsubmitted', 'pending', 'approved', 'suspended'] as const;
+      const results = await Promise.all(statuses.map(status => {
+        let query = supabase.from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .not('participant_type', 'is', null);
+        if (status !== 'all') query = query.eq('approval_status', status);
+        return query;
+      }));
+      const error = results.find(result => result.error)?.error;
+      if (error) throw error;
+      setApprovalCounts({
+        all: results[0].count ?? 0,
+        unsubmitted: results[1].count ?? 0,
+        pending: results[2].count ?? 0,
+        approved: results[3].count ?? 0,
+        suspended: results[4].count ?? 0,
+      });
+    } catch (err) {
+      console.error('Failed fetching approval overview counts:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'approvals') void fetchApprovalCounts();
+  }, [activeTab, user?.id, fetchApprovalCounts]);
 
   // Fetch Tab Data
   const fetchData = useCallback(async () => {
@@ -329,6 +361,7 @@ export function MobileEcosystemPortal() {
 
       await logGovernanceAction(profile.id, 'APPROVAL_GRANTED', 'Approved via mobile portal', profile.email);
       fetchData();
+      void fetchApprovalCounts();
     } catch (err) {
       console.error('Approve failed:', err);
     }
@@ -352,6 +385,7 @@ export function MobileEcosystemPortal() {
 
       await logGovernanceAction(profile.id, 'PROFILE_SUSPENDED', reason, profile.email);
       fetchData();
+      void fetchApprovalCounts();
     } catch (err) {
       console.error('Suspend failed:', err);
     }
@@ -421,6 +455,7 @@ export function MobileEcosystemPortal() {
       }
 
       fetchData();
+      void fetchApprovalCounts();
     } catch (err) {
       console.error('Update profile failed:', err);
     }
@@ -622,6 +657,7 @@ export function MobileEcosystemPortal() {
 
         {activeTab === 'approvals' && (
           <MobileApprovalsScreen
+            approvalCounts={approvalCounts}
             profiles={profiles}
             loading={loading}
             totalCount={totalCount}
