@@ -143,10 +143,10 @@ export function UserCard({
                 onClick={(event) => event.stopPropagation()}
                 style={{ fontFamily: 'var(--font-mono)', color: 'var(--primary)', textDecoration: 'underline' }}
               >
-                📱 {phone}
+                {phone}
               </a>
             ) : (
-              <span style={{ fontFamily: 'var(--font-mono)' }}>📱 {phone}</span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>{phone}</span>
             )
           ) : (
             <span style={{ fontStyle: 'italic', color: 'var(--text-muted)' }}>None</span>
